@@ -1,0 +1,10 @@
+﻿  Test.cpp
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.h(12,1): warning C4005: 'MAX': macro redefinition
+C:\opencv\build\include\opencv2\core\cvdef.h(493): message : see previous definition of 'MAX'
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.h(13,1): warning C4005: 'MIN': macro redefinition
+C:\opencv\build\include\opencv2\core\cvdef.h(489): message : see previous definition of 'MIN'
+  Generating code
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 124 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  AnaliseVideo.vcxproj -> C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\x64\Release\AnaliseVideo.exe
