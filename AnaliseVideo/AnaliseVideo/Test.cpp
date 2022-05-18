@@ -102,20 +102,21 @@ int main(void) {
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
 
 
-		// Faça o seu código aqui...
-		/*
 		// Cria uma nova imagem IVC
-		IVC *image = vc_image_new(video.width, video.height, 3, 255);
+		IVC* image = vc_image_new(video.width, video.height, 3, 255);
+		IVC* image2 = vc_image_new(video.width, video.height, 1, 255);
+		IVC* image3 = vc_image_new(video.width, video.height, 1, 1);
 		// Copia dados de imagem da estrutura cv::Mat para uma estrutura IVC
 		memcpy(image->data, frame.data, video.width * video.height * 3);
 		// Executa uma função da nossa biblioteca vc
-		vc_rgb_get_green(image);
+		vc_rgb_to_gray(image, image2);
+		vc_gray_to_binary(image2, image3, 150);
 		// Copia dados de imagem da estrutura IVC para uma estrutura cv::Mat
-		memcpy(frame.data, image->data, video.width * video.height * 3);
+		memcpy(frame.data, image3->data, video.width * video.height * 3);
 		// Liberta a memória da imagem IVC que havia sido criada
 		vc_image_free(image);
-		*/
-		// +++++++++++++++++++++++++
+		vc_image_free(image2);
+		vc_image_free(image3);
 
 		/* Exibe a frame */
 		cv::imshow("VC - VIDEO", frame);
