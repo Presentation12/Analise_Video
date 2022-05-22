@@ -1,0 +1,16 @@
+Problems:
+    Maça com autocolante
+
+Testes Segmentation:
+    frame1 - done
+    frame2 - done
+    frame3 - done
+    frame4 - merda (canto de maça em cima)
+    frame5 - merda (total degredo)
+    frame6 - merda (total degredo)
+    frame7 - done
+    frame8 - quase done (laranja da direita com buraco)
+    frame9 - done 
+    frame10 - done
+    frame11 - done
+
