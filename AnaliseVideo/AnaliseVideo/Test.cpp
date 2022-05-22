@@ -1,6 +1,5 @@
 ﻿#include <iostream>
 #include <string>
-#include <chrono>
 #include <opencv2\opencv.hpp>
 #include <opencv2\core.hpp>
 #include <opencv2\highgui.hpp>
@@ -10,29 +9,9 @@ extern "C" {
 #include "vc.h"
 }
 
-void vc_timer(void) {
-	static bool running = false;
-	static std::chrono::steady_clock::time_point previousTime = std::chrono::steady_clock::now();
-
-	if (!running) {
-		running = true;
-	}
-	else {
-		std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
-		std::chrono::steady_clock::duration elapsedTime = currentTime - previousTime;
-
-		// Tempo em segundos.
-		std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(elapsedTime);
-		double nseconds = time_span.count();
-
-		std::cout << "Tempo decorrido: " << nseconds << "segundos" << std::endl;
-		std::cout << "Pressione qualquer tecla para continuar...\n";
-		std::cin.get();
-	}
-}
 
 int main(void) {
-	// Vídeo
+	// V�deo
 	char videofile[20] = "video.avi";
 	cv::VideoCapture capture;
 	struct
@@ -46,48 +25,45 @@ int main(void) {
 	std::string str;
 	int key = 0;
 
-	/* Leitura de vídeo de um ficheiro */
+	/* Leitura de v�deo de um ficheiro */
 	/* NOTA IMPORTANTE:
-	O ficheiro video.avi deverá estar localizado no mesmo directório que o ficheiro de código fonte.
+	O ficheiro video.avi dever� estar localizado no mesmo direct�rio que o ficheiro de c�digo fonte.
 	*/
 	capture.open(videofile);
 
-	/* Em alternativa, abrir captura de vídeo pela Webcam #0 */
+	/* Em alternativa, abrir captura de v�deo pela Webcam #0 */
 	//capture.open(0, cv::CAP_DSHOW); // Pode-se utilizar apenas capture.open(0);
 
-	/* Verifica se foi possível abrir o ficheiro de vídeo */
+	/* Verifica se foi poss�vel abrir o ficheiro de v�deo */
 	if (!capture.isOpened())
 	{
-		std::cerr << "Erro ao abrir o ficheiro de vídeo!\n";
+		std::cerr << "Erro ao abrir o ficheiro de v�deo!\n";
 		return 1;
 	}
 
-	/* Número total de frames no vídeo */
+	/* N�mero total de frames no v�deo */
 	video.ntotalframes = (int)capture.get(cv::CAP_PROP_FRAME_COUNT);
-	/* Frame rate do vídeo */
+	/* Frame rate do v�deo */
 	video.fps = (int)capture.get(cv::CAP_PROP_FPS);
-	/* Resolução do vídeo */
+	/* Resolu��o do v�deo */
 	video.width = (int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
 	video.height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
 
-	/* Cria uma janela para exibir o vídeo */
+	/* Cria uma janela para exibir o v�deo */
 	cv::namedWindow("VC - VIDEO", cv::WINDOW_AUTOSIZE);
-
-	/* Inicia o timer */
-	vc_timer();
 
 	cv::Mat frame;
 	while (key != 'q') {
-		/* Leitura de uma frame do vídeo */
+		/* Leitura de uma frame do v�deo */
 		capture.read(frame);
 
 		/* Verifica se conseguiu ler a frame */
 		if (frame.empty()) break;
 
-		/* Número da frame a processar */
+		/* N�mero da frame a processar */
 		video.nframe = (int)capture.get(cv::CAP_PROP_POS_FRAMES);
 
-		/* Exemplo de inserção texto na frame */
+		/* Exemplo de inser��o texto na frame */
 		str = std::string("RESOLUCAO: ").append(std::to_string(video.width)).append("x").append(std::to_string(video.height));
 		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
 		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
@@ -100,38 +76,32 @@ int main(void) {
 		str = std::string("N. DA FRAME: ").append(std::to_string(video.nframe));
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
+		
 
+		// Fa�a o seu c�digo aqui...
 
 		// Cria uma nova imagem IVC
 		IVC* image = vc_image_new(video.width, video.height, 3, 255);
-		IVC* image2 = vc_image_new(video.width, video.height, 1, 255);
-		IVC* image3 = vc_image_new(video.width, video.height, 1, 1);
 		// Copia dados de imagem da estrutura cv::Mat para uma estrutura IVC
 		memcpy(image->data, frame.data, video.width * video.height * 3);
-		// Executa uma função da nossa biblioteca vc
-		vc_rgb_to_gray(image, image2);
-		vc_gray_to_binary(image2, image3, 150);
+		// Executa uma fun��o da nossa biblioteca vc
 		// Copia dados de imagem da estrutura IVC para uma estrutura cv::Mat
-		memcpy(frame.data, image3->data, video.width * video.height * 3);
-		// Liberta a memória da imagem IVC que havia sido criada
+		memcpy(frame.data, image->data, video.width * video.height * 3);
+		// Liberta a mem�ria da imagem IVC que havia sido criada
 		vc_image_free(image);
-		vc_image_free(image2);
-		vc_image_free(image3);
+		// +++++++++++++++++++++++++
 
 		/* Exibe a frame */
 		cv::imshow("VC - VIDEO", frame);
 
-		/* Sai da aplicação, se o utilizador premir a tecla 'q' */
+		/* Sai da aplica��o, se o utilizador premir a tecla 'q' */
 		key = cv::waitKey(1);
 	}
-
-	/* Para o timer e exibe o tempo decorrido */
-	vc_timer();
 
 	/* Fecha a janela */
 	cv::destroyWindow("VC - VIDEO");
 
-	/* Fecha o ficheiro de vídeo */
+	/* Fecha o ficheiro de v�deo */
 	capture.release();
 
 	return 0;
