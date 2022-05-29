@@ -24,6 +24,7 @@ int main(void) {
 	// Outros
 	std::string str;
 	int key = 0;
+	
 
 	/* Leitura de v�deo de um ficheiro */
 	/* NOTA IMPORTANTE:
@@ -77,18 +78,60 @@ int main(void) {
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
 		
-
+		printf("%d\n", video.nframe);
 		// Fa�a o seu c�digo aqui...
+		//CRIAR IVCS NECESSARIOS
 
+		IVC* src = vc_image_new(video.width, video.height, 3, 255);
+		IVC* rgb = vc_image_new(video.width, video.height, 3, 255);
+		IVC* hsv = vc_image_new(video.width, video.height, 3, 255);
+		IVC* hsv_s = vc_image_new(video.width, video.height, 1, 255);
+		int blobs = 0;
+		IVC* hsv_blobed = vc_image_new(video.width, video.height, 1, 255);
+		OVC* blob = vc_binary_blob_labelling(hsv_s, hsv_blobed, &blobs);
+
+		//CRIAR OVC PARA BLOBS
+		//NUM BLOBS
 		// Cria uma nova imagem IVC
-		IVC* image = vc_image_new(video.width, video.height, 3, 255);
 		// Copia dados de imagem da estrutura cv::Mat para uma estrutura IVC
-		memcpy(image->data, frame.data, video.width * video.height * 3);
-		// Executa uma fun��o da nossa biblioteca vc
-		// Copia dados de imagem da estrutura IVC para uma estrutura cv::Mat
-		memcpy(frame.data, image->data, video.width * video.height * 3);
+		memcpy(src->data, frame.data, video.width * video.height * 3);
+
+		//PASSAR BGR (FORMATO VIDEO) PARA RGB
+		vc_convert_bgr_to_rgb(src, rgb);
+		
+		//PASSAR RGB -> HSV (???)
+		vc_rgb_to_hsv(rgb, hsv);
+		
+		//FAZER HSV SEGMENTATION
+		vc_hsv_segmentation(hsv, hsv_s, 15, 30, 50, 100, 25, 90);
+		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
+
+		//FAZER BINARY BLOB LABELLING
+		//vc_binary_blob_info(hsv_blobed, blob, blobs);
+
+		memcpy(frame.data, rgb->data, video.width * video.height * 3);
+
+		/*
+			PSEUDOCODIGO
+			SE BLOBS EXISTIR
+				RAIO = 0
+				FOR(I < NUMERO DE BLOBS){
+					SE BLOB[I].area > 4500 (NAO SEI PQ ESTE VALOR)
+						RAIO = BLOBS[I].XC - BLOBS[I].X
+
+						CV::CIRCLE(FRUTA)
+						CV::CIRCLE(CENTRO DE MASSA)
+						PRINTAR AREA AO LADO DA FRUTA
+						PRINTAR PERIMETRO AO LADO DA FRUTA
+				}
+		*/
+
 		// Liberta a mem�ria da imagem IVC que havia sido criada
-		vc_image_free(image);
+		vc_image_free(src);
+		vc_image_free(rgb);
+		vc_image_free(hsv);
+		vc_image_free(hsv_s);
+		vc_image_free(hsv_blobed);
 		// +++++++++++++++++++++++++
 
 		/* Exibe a frame */

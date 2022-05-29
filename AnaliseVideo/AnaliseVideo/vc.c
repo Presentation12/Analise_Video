@@ -1863,3 +1863,34 @@ int vc_rgb_histogram_equalization(IVC *src, IVC *dst)
 
 	return res;
 }
+
+int vc_convert_bgr_to_rgb(IVC* src, IVC* dst)
+{
+	unsigned char* data = (unsigned char*)src->data;
+	unsigned char* datadst = (unsigned char*)dst->data;
+	int width = src->width;
+	int height = src->height;
+	int bytesperline = src->width * src->channels;
+	int channels = src->channels;
+	int channels_dst = dst->channels;
+	int x, y, i, j;
+	long int pos;
+
+	//Verificacao de erros
+	if ((width <= 0) || (height <= 0) || (data == NULL)) return 0;
+	if (channels != 3 || channels_dst != 3) return 0;
+	//Verifica se existe blobs
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * dst->bytesperline + x * dst->channels;
+			datadst[pos] = data[pos + 2];
+			datadst[pos + 1] = data[pos + 1];
+			datadst[pos + 2] = data[pos];
+		}
+	}
+
+	return 1;
+}

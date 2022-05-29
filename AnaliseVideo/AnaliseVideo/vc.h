@@ -112,5 +112,6 @@ int vc_gray_histogram_show(IVC *src, IVC *dst);
 int equalize(unsigned char *datasrc, unsigned char *datadst, int bytesperline, int channels, int offset, int width, int height);
 int vc_gray_histogram_equalization(IVC *src, IVC *dst);
 int vc_rgb_histogram_equalization(IVC *src, IVC *dst);
+int vc_convert_bgr_to_rgb(IVC* src, IVC* dst);
 
 
