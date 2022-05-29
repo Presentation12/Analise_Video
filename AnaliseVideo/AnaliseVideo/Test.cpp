@@ -84,11 +84,13 @@ int main(void) {
 
 		IVC* src = vc_image_new(video.width, video.height, 3, 255);
 		IVC* rgb = vc_image_new(video.width, video.height, 3, 255);
-		IVC* bin = vc_image_new(video.width, video.height, 1, 255);
 		IVC* hsv = vc_image_new(video.width, video.height, 3, 255);
 		IVC* hsv_s = vc_image_new(video.width, video.height, 1, 255);
+		IVC* bc = vc_image_new(video.width, video.height, 1, 255);
+		IVC* bc2 = vc_image_new(video.width, video.height, 1, 255);
 		int blobs = 0;
 		IVC* hsv_blobed = vc_image_new(video.width, video.height, 1, 255);
+		int raio;
 
 		//CRIAR OVC PARA BLOBS
 		//NUM BLOBS
@@ -97,19 +99,21 @@ int main(void) {
 		memcpy(src->data, frame.data, video.width * video.height * 3);
 
 		//PASSAR BGR (FORMATO VIDEO) PARA RGB
-		vc_convert_bgr_to_rgb(src, rgb);
+		vc_bgr_to_rgb(src, rgb);
 
 		//PASSAR RGB -> HSV (???)
 		vc_rgb_to_hsv(rgb, hsv);
 
-		//VISTO NA NET !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		HSVFilter(hsv, bin);
-
 		//FAZER HSV SEGMENTATION
-		//vc_hsv_segmentation(hsv, hsv_s, 3, 30, 0, 70, 0, 70);
+		//vc_hsv_segmentation(hsv, hsv_s, 15, 30, 50, 100, 25, 90);
+		//vc_hsv_segmentation(hsv, hsv_s, 3, 30, 40, 100, 0, 90);
 		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
 
-		//FAZER BINARY BLOB LABELLING
+		vc_hsv_segmentation(hsv, hsv_s, 15, 30, 50, 100, 25, 90);
+		vc_binary_open(hsv_s, bc, 5);
+		vc_binary_erode(bc, bc2, 5);
+
+		//FAZER BINARY BLOB LABELLING E TER A INFO
 		OVC* blob = vc_binary_blob_labelling(hsv_s, hsv_blobed, &blobs);
 		vc_binary_blob_info(hsv_blobed, blob, blobs);
 
@@ -130,21 +134,17 @@ int main(void) {
 						PRINTAR PERIMETRO AO LADO DA FRUTA
 				}
 		*/
-		printf("%d\n", blobs);
 
-		int raio = 0;
 		for (int i = 0; i < blobs; i++) {
-			if (blob[i].area > 4500)
+			if (blob[i].area > 20000)
 			{
 				raio = blob[i].xc - blob[i].x;
 
 				cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(255, 50, 50, 0), 4, 4, 0);
 				cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), raio, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
 				str = std::string("Area:").append(std::to_string(blob[i].area));
-				//Por modificar final (cv::Scalar...)
 				cv::putText(frame, str, cv::Point(blob[i].xc - 20, blob[i].yc - 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 				str = std::string("Perimetro:").append(std::to_string(blob[i].perimeter));
-				//Por modificar final (cv::Scalar...)
 				cv::putText(frame, str, cv::Point(blob[i].xc, blob[i].yc), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 			}
 		}
@@ -153,6 +153,8 @@ int main(void) {
 		vc_image_free(src);
 		vc_image_free(rgb);
 		vc_image_free(hsv);
+		vc_image_free(bc);
+		vc_image_free(bc2);
 		vc_image_free(hsv_s);
 		vc_image_free(hsv_blobed);
 		// +++++++++++++++++++++++++

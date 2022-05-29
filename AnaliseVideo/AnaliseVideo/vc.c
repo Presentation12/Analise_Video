@@ -1846,7 +1846,7 @@ int vc_rgb_histogram_equalization(IVC *src, IVC *dst)
 	return res;
 }
 
-int vc_convert_bgr_to_rgb(IVC* src, IVC* dst)
+int vc_bgr_to_rgb(IVC* src, IVC* dst)
 {
 	unsigned char* data = (unsigned char*)src->data;
 	unsigned char* datadst = (unsigned char*)dst->data;
@@ -1874,38 +1874,5 @@ int vc_convert_bgr_to_rgb(IVC* src, IVC* dst)
 		}
 	}
 
-	return 1;
-}
-
-//EXTRAS!!!!!!!!!!
-int HSVFilter(IVC* srcImg, IVC* dstImg)
-{
-	auto* srcData = (unsigned char*)(srcImg->data);
-	auto* dstData = (unsigned char*)(dstImg->data);
-	auto srcBytesperline = srcImg->bytesperline;
-	auto dstBytesperline = dstImg->bytesperline;
-	auto srcChannels = srcImg->channels;
-	auto dstChannels = dstImg->channels;
-	auto srcWidth = srcImg->width;
-	auto srcHeight = srcImg->height;
-
-	for (auto y = 0; y < srcHeight; y++)
-	{
-		for (auto x = 0; x < srcWidth; x++)
-		{
-			long srcPos = y * srcBytesperline + x * srcChannels;
-			long dstPos = y * dstBytesperline + x * dstChannels;
-
-			//if (srcData[srcPos] == HSVWHITEHUE && srcData[srcPos + 1] <= HSVWHITESAT && srcData[srcPos + 3] == HSVWHITEVALUE)
-			if (srcData[srcPos + 1] <= 50)
-			{
-				dstData[dstPos] = 0;
-			}
-			else
-			{
-				dstData[dstPos] = 255;
-			}
-		}
-	}
 	return 1;
 }
