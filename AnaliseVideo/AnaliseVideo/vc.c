@@ -1362,8 +1362,8 @@ int vc_binary_blob_labelling(IVC *src, IVC *dst)
 // OVC*		: Retorna um array de estruturas de blobs (objectos), com respectivas etiquetas. � necess�rio libertar posteriormente esta mem�ria.
 OVC *vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 {
-	unsigned char *datasrc = (unsigned char *)src->data;
-	unsigned char *datadst = (unsigned char *)dst->data;
+	unsigned char* datasrc = (unsigned char*)src->data;
+	unsigned char* datadst = (unsigned char*)dst->data;
 	int width = src->width;
 	int height = src->height;
 	int bytesperline = src->bytesperline;
@@ -1371,34 +1371,30 @@ OVC *vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 	int x, y, a, b;
 	long int i, size;
 	long int posX, posA, posB, posC, posD;
-	int labeltable[256] = {0};
-	int labelarea[256] = {0};
+	int labeltable[256] = { 0 };
+	int labelarea[256] = { 0 };
 	int label = 1; // Etiqueta inicial.
 	int num, tmplabel;
-	OVC *blobs; // Apontador para array de blobs (objectos) que ser� retornado desta fun��o.
+	OVC* blobs; // Apontador para array de blobs (objectos) que será retornado desta função.
 
-	// Verifica��o de erros
-	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
-		return 0;
-	if ((src->width != dst->width) || (src->height != dst->height) || (src->channels != dst->channels))
-		return NULL;
-	if (channels != 1)
-		return NULL;
+				// Verificação de erros
+	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
+	if ((src->width != dst->width) || (src->height != dst->height) || (src->channels != dst->channels)) return NULL;
+	if (channels != 1) return NULL;
 
-	// Copia dados da imagem bin�ria para imagem grayscale
+	// Copia dados da imagem binária para imagem grayscale
 	memcpy(datadst, datasrc, bytesperline * height);
 
-	// Todos os pix�is de plano de fundo devem obrigat�riamente ter valor 0
-	// Todos os pix�is de primeiro plano devem obrigat�riamente ter valor 255
-	// Ser�o atribu�das etiquetas no intervalo [1,254]
-	// Este algoritmo est� assim limitado a 254 labels
+	// Todos os pixéis de plano de fundo devem obrigatóriamente ter valor 0
+	// Todos os pixéis de primeiro plano devem obrigatóriamente ter valor 255
+	// Serão atribuídas etiquetas no intervalo [1,254]
+	// Este algoritmo está assim limitado a 255 labels
 	for (i = 0, size = bytesperline * height; i < size; i++)
 	{
-		if (datadst[i] != 0)
-			datadst[i] = 255;
+		if (datadst[i] != 0) datadst[i] = 255;
 	}
 
-	// Limpa os rebordos da imagem bin�ria
+	// Limpa os rebordos da imagem binária
 	for (y = 0; y < height; y++)
 	{
 		datadst[y * bytesperline + 0 * channels] = 0;
@@ -1420,12 +1416,12 @@ OVC *vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 			// D X
 
 			posA = (y - 1) * bytesperline + (x - 1) * channels; // A
-			posB = (y - 1) * bytesperline + x * channels;		// B
+			posB = (y - 1) * bytesperline + x * channels; // B
 			posC = (y - 1) * bytesperline + (x + 1) * channels; // C
-			posD = y * bytesperline + (x - 1) * channels;		// D
-			posX = y * bytesperline + x * channels;				// X
+			posD = y * bytesperline + (x - 1) * channels; // D
+			posX = y * bytesperline + x * channels; // X
 
-			// Se o pixel foi marcado
+													// Se o pixel foi marcado
 			if (datadst[posX] != 0)
 			{
 				if ((datadst[posA] == 0) && (datadst[posB] == 0) && (datadst[posC] == 0) && (datadst[posD] == 0))
@@ -1438,18 +1434,14 @@ OVC *vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 				{
 					num = 255;
 
-					// Se A est� marcado
-					if (datadst[posA] != 0)
-						num = labeltable[datadst[posA]];
-					// Se B est� marcado, e � menor que a etiqueta "num"
-					if ((datadst[posB] != 0) && (labeltable[datadst[posB]] < num))
-						num = labeltable[datadst[posB]];
-					// Se C est� marcado, e � menor que a etiqueta "num"
-					if ((datadst[posC] != 0) && (labeltable[datadst[posC]] < num))
-						num = labeltable[datadst[posC]];
-					// Se D est� marcado, e � menor que a etiqueta "num"
-					if ((datadst[posD] != 0) && (labeltable[datadst[posD]] < num))
-						num = labeltable[datadst[posD]];
+					// Se A está marcado
+					if (datadst[posA] != 0) num = labeltable[datadst[posA]];
+					// Se B está marcado, e é menor que a etiqueta "num"
+					if ((datadst[posB] != 0) && (labeltable[datadst[posB]] < num)) num = labeltable[datadst[posB]];
+					// Se C está marcado, e é menor que a etiqueta "num"
+					if ((datadst[posC] != 0) && (labeltable[datadst[posC]] < num)) num = labeltable[datadst[posC]];
+					// Se D está marcado, e é menor que a etiqueta "num"
+					if ((datadst[posD] != 0) && (labeltable[datadst[posD]] < num)) num = labeltable[datadst[posD]];
 
 					// Atribui a etiqueta ao pixel
 					datadst[posX] = num;
@@ -1527,49 +1519,44 @@ OVC *vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 		}
 	}
 
-	// printf("\nMax Label = %d\n", label);
+	//? printf("\nMax Label = %d\n", label);
 
-	// Contagem do n�mero de blobs
+	// Contagem do número de blobs
 	// Passo 1: Eliminar, da tabela, etiquetas repetidas
 	for (a = 1; a < label - 1; a++)
 	{
 		for (b = a + 1; b < label; b++)
 		{
-			if (labeltable[a] == labeltable[b])
-				labeltable[b] = 0;
+			if (labeltable[a] == labeltable[b]) labeltable[b] = 0;
 		}
 	}
-	// Passo 2: Conta etiquetas e organiza a tabela de etiquetas, para que n�o hajam valores vazios (zero) entre etiquetas
+	// Passo 2: Conta etiquetas e organiza a tabela de etiquetas, para que não hajam valores vazios (zero) entre etiquetas
 	*nlabels = 0;
 	for (a = 1; a < label; a++)
 	{
 		if (labeltable[a] != 0)
 		{
 			labeltable[*nlabels] = labeltable[a]; // Organiza tabela de etiquetas
-			(*nlabels)++;						  // Conta etiquetas
+			(*nlabels)++; // Conta etiquetas
 		}
 	}
 
-	// Se n�o h� blobs
-	if (*nlabels == 0)
-		return NULL;
+	// Se não há blobs
+	if (*nlabels == 0) return NULL;
 
 	// Cria lista de blobs (objectos) e preenche a etiqueta
-	blobs = (OVC *)calloc((*nlabels), sizeof(OVC));
+	blobs = (OVC*)calloc((*nlabels), sizeof(OVC));
 	if (blobs != NULL)
 	{
-		for (a = 0; a < (*nlabels); a++)
-			blobs[a].label = labeltable[a];
+		for (a = 0; a < (*nlabels); a++) blobs[a].label = labeltable[a];
 	}
-	else
-		return NULL;
+	else return NULL;
 
 	return blobs;
 }
 
 int vc_binary_blob_info(IVC *src, OVC *blobs, int nblobs)
 {
-	//Apagar variaveis, usar por parametro
 	unsigned char* data = (unsigned char*)src->data;
 	int width = src->width;
 	int height = src->height;
@@ -1581,10 +1568,8 @@ int vc_binary_blob_info(IVC *src, OVC *blobs, int nblobs)
 	long int sumx, sumy;
 
 	// Verifica��o de erros
-	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
-		return 0;
-	if (channels != 1)
-		return 0;
+	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
+	if (channels != 1) return 0;
 
 	// Conta �rea de cada blob
 	for (i = 0; i < nblobs; i++)
@@ -1615,14 +1600,10 @@ int vc_binary_blob_info(IVC *src, OVC *blobs, int nblobs)
 					sumy += y;
 
 					// Bounding Box
-					if (xmin > x)
-						xmin = x;
-					if (ymin > y)
-						ymin = y;
-					if (xmax < x)
-						xmax = x;
-					if (ymax < y)
-						ymax = y;
+					if (xmin > x) xmin = x;
+					if (ymin > y) ymin = y;
+					if (xmax < x) xmax = x;
+					if (ymax < y) ymax = y;
 
 					// Per�metro
 					// Se pelo menos um dos quatro vizinhos n�o pertence ao mesmo label, ent�o � um pixel de contorno
@@ -1641,8 +1622,8 @@ int vc_binary_blob_info(IVC *src, OVC *blobs, int nblobs)
 		blobs[i].height = (ymax - ymin) + 1;
 
 		// Centro de Gravidade
-		// blobs[i].xc = (xmax - xmin) / 2;
-		// blobs[i].yc = (ymax - ymin) / 2;
+		//blobs[i].xc = (xmax - xmin) / 2;
+		//blobs[i].yc = (ymax - ymin) / 2;
 		blobs[i].xc = sumx / MAX_2(blobs[i].area, 1);
 		blobs[i].yc = sumy / MAX_2(blobs[i].area, 1);
 	}
@@ -1893,5 +1874,38 @@ int vc_convert_bgr_to_rgb(IVC* src, IVC* dst)
 		}
 	}
 
+	return 1;
+}
+
+//EXTRAS!!!!!!!!!!
+int HSVFilter(IVC* srcImg, IVC* dstImg)
+{
+	auto* srcData = (unsigned char*)(srcImg->data);
+	auto* dstData = (unsigned char*)(dstImg->data);
+	auto srcBytesperline = srcImg->bytesperline;
+	auto dstBytesperline = dstImg->bytesperline;
+	auto srcChannels = srcImg->channels;
+	auto dstChannels = dstImg->channels;
+	auto srcWidth = srcImg->width;
+	auto srcHeight = srcImg->height;
+
+	for (auto y = 0; y < srcHeight; y++)
+	{
+		for (auto x = 0; x < srcWidth; x++)
+		{
+			long srcPos = y * srcBytesperline + x * srcChannels;
+			long dstPos = y * dstBytesperline + x * dstChannels;
+
+			//if (srcData[srcPos] == HSVWHITEHUE && srcData[srcPos + 1] <= HSVWHITESAT && srcData[srcPos + 3] == HSVWHITEVALUE)
+			if (srcData[srcPos + 1] <= 50)
+			{
+				dstData[dstPos] = 0;
+			}
+			else
+			{
+				dstData[dstPos] = 255;
+			}
+		}
+	}
 	return 1;
 }

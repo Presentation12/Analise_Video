@@ -115,3 +115,4 @@ int vc_rgb_histogram_equalization(IVC *src, IVC *dst);
 int vc_convert_bgr_to_rgb(IVC* src, IVC* dst);
 
 
+int HSVFilter(IVC* srcImg, IVC* dstImg);

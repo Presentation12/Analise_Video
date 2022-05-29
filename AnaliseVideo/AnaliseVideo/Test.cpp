@@ -78,17 +78,17 @@ int main(void) {
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
 		
-		printf("%d\n", video.nframe);
+		//printf("%d\n", video.nframe);
 		// Fa�a o seu c�digo aqui...
 		//CRIAR IVCS NECESSARIOS
 
 		IVC* src = vc_image_new(video.width, video.height, 3, 255);
 		IVC* rgb = vc_image_new(video.width, video.height, 3, 255);
+		IVC* bin = vc_image_new(video.width, video.height, 1, 255);
 		IVC* hsv = vc_image_new(video.width, video.height, 3, 255);
 		IVC* hsv_s = vc_image_new(video.width, video.height, 1, 255);
 		int blobs = 0;
 		IVC* hsv_blobed = vc_image_new(video.width, video.height, 1, 255);
-		OVC* blob = vc_binary_blob_labelling(hsv_s, hsv_blobed, &blobs);
 
 		//CRIAR OVC PARA BLOBS
 		//NUM BLOBS
@@ -98,19 +98,24 @@ int main(void) {
 
 		//PASSAR BGR (FORMATO VIDEO) PARA RGB
 		vc_convert_bgr_to_rgb(src, rgb);
-		
+
 		//PASSAR RGB -> HSV (???)
 		vc_rgb_to_hsv(rgb, hsv);
-		
+
+		//VISTO NA NET !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		HSVFilter(hsv, bin);
+
 		//FAZER HSV SEGMENTATION
-		vc_hsv_segmentation(hsv, hsv_s, 15, 30, 50, 100, 25, 90);
+		//vc_hsv_segmentation(hsv, hsv_s, 3, 30, 0, 70, 0, 70);
 		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
 
 		//FAZER BINARY BLOB LABELLING
+		OVC* blob = vc_binary_blob_labelling(hsv_s, hsv_blobed, &blobs);
 		vc_binary_blob_info(hsv_blobed, blob, blobs);
 
 		memcpy(frame.data, src->data, video.width * video.height * 3);
 
+		//PARTE PRINTAGENS
 		/*
 			PSEUDOCODIGO
 			SE BLOBS EXISTIR
@@ -125,6 +130,24 @@ int main(void) {
 						PRINTAR PERIMETRO AO LADO DA FRUTA
 				}
 		*/
+		printf("%d\n", blobs);
+
+		int raio = 0;
+		for (int i = 0; i < blobs; i++) {
+			if (blob[i].area > 4500)
+			{
+				raio = blob[i].xc - blob[i].x;
+
+				cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(255, 50, 50, 0), 4, 4, 0);
+				cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), raio, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
+				str = std::string("Area:").append(std::to_string(blob[i].area));
+				//Por modificar final (cv::Scalar...)
+				cv::putText(frame, str, cv::Point(blob[i].xc - 20, blob[i].yc - 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
+				str = std::string("Perimetro:").append(std::to_string(blob[i].perimeter));
+				//Por modificar final (cv::Scalar...)
+				cv::putText(frame, str, cv::Point(blob[i].xc, blob[i].yc), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
+			}
+		}
 
 		// Liberta a mem�ria da imagem IVC que havia sido criada
 		vc_image_free(src);

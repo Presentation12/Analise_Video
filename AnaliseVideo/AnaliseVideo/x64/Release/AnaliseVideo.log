@@ -1,9 +1,31 @@
-﻿  Test.cpp
-C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.h(12,1): warning C4005: 'MAX': macro redefinition
-C:\opencv\build\include\opencv2\core\cvdef.h(493): message : see previous definition of 'MAX'
-C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.h(13,1): warning C4005: 'MIN': macro redefinition
-C:\opencv\build\include\opencv2\core\cvdef.h(489): message : see previous definition of 'MIN'
-C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\Test.cpp(41,16): warning C4566: character represented by universal-character-name '\uFFFD' cannot be represented in the current code page (1252)
+﻿  vc.c
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(253,70): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(294,66): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(615,10): warning C4553: '==': result of expression not used; did you intend '='?
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(644,22): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(645,33): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(646,28): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(600,1): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(601,1): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(670,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(671,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(673,42): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(674,42): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(676,42): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(677,42): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(736,46): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(743,59): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(747,48): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(754,60): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(918,33): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(992,33): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(1751,71): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(1805,72): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(1839,11): warning C4101: 'pos': unreferenced local variable
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(1858,15): warning C4101: 'j': unreferenced local variable
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(1858,12): warning C4101: 'i': unreferenced local variable
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(1883,1): warning C4133: 'initializing': incompatible types - from 'unsigned char *' to 'int *'
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.c(1884,1): warning C4133: 'initializing': incompatible types - from 'unsigned char *' to 'int *'
   Generating code
   2 of 123 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
