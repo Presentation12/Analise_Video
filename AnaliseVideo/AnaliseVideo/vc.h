@@ -116,3 +116,5 @@ int vc_rgb_histogram_equalization(IVC *src, IVC *dst);
 
 //FUNCOES NOVAS PARA TRABALHO
 int vc_bgr_to_rgb(IVC* src, IVC* dst);
+int vc_hsv_segmentation_fruta(IVC* src, IVC* dst, int hmin, int hmax, int smin, int smax, int vmin, int vmax);
+int vc_unite(IVC* src, IVC* dst, IVC* dstf);

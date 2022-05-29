@@ -698,6 +698,55 @@ int vc_hsv_segmentation(IVC *src, IVC *dst, int hmin, int hmax, int smin, int sm
 	return 1;
 }
 
+int vc_hsv_segmentation_fruta(IVC* src, IVC* dst, int hmin, int hmax, int smin, int smax, int vmin, int vmax)
+{
+	unsigned char* data_src = (unsigned char*)src->data, * data_dst = (unsigned char*)dst->data;
+	int width_src = src->width, width_dst = dst->width;
+	int height_src = src->height, height_dst = dst->height;
+	int channels_src = src->channels, channel_dst = dst->channels;
+	int bytesperline_src = width_src * channels_src, bytesperline_dst = width_dst * channel_dst;
+	int x, y;
+	float hue, sat, value;
+
+	if ((width_src <= 0) || (height_src <= 0) || (data_src == NULL))
+		return 0;
+	if (channels_src != 3 || channel_dst != 1)
+		return 0;
+
+	if ((width_src != width_dst) || (height_src != height_dst))
+		return 0;
+
+	hmin = HSV_2_RGB((float)hmin);
+	hmax = HSV_2_RGB((float)hmax);
+
+	smin = CONV_RANGE((float)smin, 100, 255);
+	smax = CONV_RANGE((float)smax, 100, 255);
+
+	vmin = CONV_RANGE((float)vmin, 100, 255);
+	vmax = CONV_RANGE((float)vmax, 100, 255);
+
+	for (y = 0; y < height_src; y++)
+	{
+		for (x = 0; x < width_src; x++)
+		{
+			int pos_src = y * bytesperline_src + x * channels_src;
+			int pos_dst = y * bytesperline_dst + x * channel_dst;
+
+			hue = (float)data_src[pos_src];
+			sat = (float)data_src[pos_src + 1];
+			value = (float)data_src[pos_src + 2];
+
+
+
+			if ((hue >= hmin && hue <= hmax) &&
+				(sat >= smin && sat <= smax) &&
+				(value >= vmin && value <= vmax)) data_dst[pos_dst] = 0;
+		}
+	}
+
+	return 1;
+}
+
 int vc_scale_gray_to_rgb(IVC *src, IVC *dst)
 {
 	unsigned char *datasrc = (unsigned char *)src->data;
@@ -1875,4 +1924,29 @@ int vc_bgr_to_rgb(IVC* src, IVC* dst)
 	}
 
 	return 1;
+}
+
+int vc_unite(IVC* src, IVC* dst, IVC* dstf) {
+	unsigned char* data = (unsigned char*)src->data;
+	unsigned char* datadst = (unsigned char*)dst->data;
+	int width = src->width;
+	int height = src->height;
+	int bytesperline = src->width * src->channels;
+	int channels = src->channels;
+	int channels_dst = dst->channels;
+	int x, y, i, j;
+	long int pos;
+
+	if ((width <= 0) || (height <= 0) || (data == NULL)) return 0;
+	if (channels != 3 || channels_dst != 3) return 0;
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * dst->bytesperline + x * dst->channels;
+			
+			if (data[pos] == 1 || datadst[0] == 1) dstf[0].data = 1;
+		}
+	}
 }

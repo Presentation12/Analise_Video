@@ -24,7 +24,15 @@ int main(void) {
 	// Outros
 	std::string str;
 	int key = 0;
-	
+	IVC* src = NULL;
+	IVC* rgb = NULL;
+	IVC* hsv = NULL;
+	IVC* hsv_s = NULL;
+	IVC* hsv_s2 = NULL;
+	IVC* hsv_s3 = NULL;
+	IVC* bc = NULL;
+	IVC* bc2 = NULL;
+	IVC* hsv_blobed = NULL;
 
 	/* Leitura de v�deo de um ficheiro */
 	/* NOTA IMPORTANTE:
@@ -81,16 +89,17 @@ int main(void) {
 		//printf("%d\n", video.nframe);
 		// Fa�a o seu c�digo aqui...
 		//CRIAR IVCS NECESSARIOS
-
-		IVC* src = vc_image_new(video.width, video.height, 3, 255);
-		IVC* rgb = vc_image_new(video.width, video.height, 3, 255);
-		IVC* hsv = vc_image_new(video.width, video.height, 3, 255);
-		IVC* hsv_s = vc_image_new(video.width, video.height, 1, 255);
-		IVC* bc = vc_image_new(video.width, video.height, 1, 255);
-		IVC* bc2 = vc_image_new(video.width, video.height, 1, 255);
-		int blobs = 0;
-		IVC* hsv_blobed = vc_image_new(video.width, video.height, 1, 255);
+		src = vc_image_new(video.width, video.height, 3, 255);
+		rgb = vc_image_new(video.width, video.height, 3, 255);
+		hsv = vc_image_new(video.width, video.height, 3, 255);
+		hsv_s = vc_image_new(video.width, video.height, 1, 255);
+		hsv_s2 = vc_image_new(video.width, video.height, 1, 255);
+		hsv_s3 = vc_image_new(video.width, video.height, 1, 255);
+		bc = vc_image_new(video.width, video.height, 1, 255);
+		bc2 = vc_image_new(video.width, video.height, 1, 255);
+		hsv_blobed = vc_image_new(video.width, video.height, 1, 255);
 		int raio;
+		int blobs = 0;
 
 		//CRIAR OVC PARA BLOBS
 		//NUM BLOBS
@@ -105,19 +114,25 @@ int main(void) {
 		vc_rgb_to_hsv(rgb, hsv);
 
 		//FAZER HSV SEGMENTATION
-		//vc_hsv_segmentation(hsv, hsv_s, 15, 30, 50, 100, 25, 90);
-		//vc_hsv_segmentation(hsv, hsv_s, 3, 30, 40, 100, 0, 90);
-		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
+		
+		//MESA
+		vc_hsv_segmentation(hsv, hsv_s, 0, 360, 1, 7, 60, 100);
 
-		vc_hsv_segmentation(hsv, hsv_s, 15, 30, 50, 100, 25, 90);
-		vc_binary_open(hsv_s, bc, 5);
-		vc_binary_erode(bc, bc2, 5);
+		//FRUTA
+		//vc_hsv_segmentation(hsv, hsv_s, 15, 30, 40, 100, 0, 100);
+		//vc_hsv_segmentation(hsv, hsv_s, 3, 30, 40, 100, 0, 90);
+		vc_hsv_segmentation_fruta(hsv, hsv_s2, 0, 12, 80, 100, 60, 100);
+		vc_hsv_segmentation(hsv, hsv_s3, 15, 30, 50, 100, 25, 90);
+		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
+		 
+		//vc_binary_open(hsv_s, bc, 5);
+		vc_binary_dilate(bc, bc2, 5);
 
 		//FAZER BINARY BLOB LABELLING E TER A INFO
 		OVC* blob = vc_binary_blob_labelling(hsv_s, hsv_blobed, &blobs);
 		vc_binary_blob_info(hsv_blobed, blob, blobs);
 
-		memcpy(frame.data, src->data, video.width * video.height * 3);
+		memcpy(frame.data, hsv_s->data, video.width * video.height * 1);
 
 		//PARTE PRINTAGENS
 		/*
@@ -135,7 +150,7 @@ int main(void) {
 				}
 		*/
 
-		for (int i = 0; i < blobs; i++) {
+		/*for (int i = 0; i < blobs; i++) {
 			if (blob[i].area > 20000)
 			{
 				raio = blob[i].xc - blob[i].x;
@@ -147,17 +162,9 @@ int main(void) {
 				str = std::string("Perimetro:").append(std::to_string(blob[i].perimeter));
 				cv::putText(frame, str, cv::Point(blob[i].xc, blob[i].yc), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 			}
-		}
+		}*/
 
-		// Liberta a mem�ria da imagem IVC que havia sido criada
-		vc_image_free(src);
-		vc_image_free(rgb);
-		vc_image_free(hsv);
-		vc_image_free(bc);
-		vc_image_free(bc2);
-		vc_image_free(hsv_s);
-		vc_image_free(hsv_blobed);
-		// +++++++++++++++++++++++++
+
 
 		/* Exibe a frame */
 		cv::imshow("VC - VIDEO", frame);
@@ -165,6 +172,18 @@ int main(void) {
 		/* Sai da aplica��o, se o utilizador premir a tecla 'q' */
 		key = cv::waitKey(1);
 	}
+
+	// Liberta a mem�ria da imagem IVC que havia sido criada
+	vc_image_free(src);
+	vc_image_free(rgb);
+	vc_image_free(hsv);
+	vc_image_free(bc);
+	vc_image_free(bc2);
+	vc_image_free(hsv_s);
+	vc_image_free(hsv_s2);
+	vc_image_free(hsv_s3);
+	vc_image_free(hsv_blobed);
+	// +++++++++++++++++++++++++
 
 	/* Fecha a janela */
 	cv::destroyWindow("VC - VIDEO");
