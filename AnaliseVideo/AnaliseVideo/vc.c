@@ -1569,7 +1569,8 @@ OVC *vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 
 int vc_binary_blob_info(IVC *src, OVC *blobs, int nblobs)
 {
-	unsigned char *data = (unsigned char *)src->data;
+	//Apagar variaveis, usar por parametro
+	unsigned char* data = (unsigned char*)src->data;
 	int width = src->width;
 	int height = src->height;
 	int bytesperline = src->bytesperline;

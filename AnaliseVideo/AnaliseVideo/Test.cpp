@@ -107,9 +107,9 @@ int main(void) {
 		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
 
 		//FAZER BINARY BLOB LABELLING
-		//vc_binary_blob_info(hsv_blobed, blob, blobs);
+		vc_binary_blob_info(hsv_blobed, blob, blobs);
 
-		memcpy(frame.data, rgb->data, video.width * video.height * 3);
+		memcpy(frame.data, src->data, video.width * video.height * 3);
 
 		/*
 			PSEUDOCODIGO
