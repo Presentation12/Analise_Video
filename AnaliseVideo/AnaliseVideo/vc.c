@@ -649,6 +649,22 @@ int vc_rgb_to_hsv(IVC *src, IVC *dst)
 	return 1;
 }
 
+int vc_invert_binary(IVC *srcdst){
+	long int pos;
+
+	for (int i = 0; i < srcdst->height; i++) {
+		for (int j = 0; j < srcdst->width; j++) {
+			pos = i * srcdst->bytesperline + j * srcdst->channels;
+			if (srcdst->data[pos] == 255) {
+				srcdst->data[pos] = 0;
+			}
+			else if (srcdst->data[pos] == 0) {
+				srcdst->data[pos] = 255;
+			}
+		}
+	}
+}
+
 int vc_hsv_segmentation(IVC *src, IVC *dst, int hmin, int hmax, int smin, int smax, int vmin, int vmax)
 {
 	unsigned char *data_src = (unsigned char *)src->data, *data_dst = (unsigned char *)dst->data;
