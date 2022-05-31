@@ -132,9 +132,11 @@ int main(void) {
 		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
 		 
 		//vc_binary_open(hsv_s, bc, 5);
-		//TIRAR COMMENT
 		vc_binary_dilate(hsv_s, bc, 11);
-		vc_binary_close(hsv_s2, bc2, 11);
+		vc_binary_close(hsv_s2, bc2, 3);
+		vc_binary_close(hsv_s2, bc2, 3);
+		vc_binary_close(hsv_s2, bc2, 3);
+		vc_binary_close(hsv_s2, bc2, 3);
 		//vc_binary_erode(hsv_s, bc2, 5);
 
 		//FAZER BINARY BLOB LABELLING E TER A INFO
@@ -147,33 +149,18 @@ int main(void) {
 		memcpy(frame.data, src->data, video.width * video.height * 3);
 
 		//PARTE PRINTAGENS
-		/*
-			PSEUDOCODIGO
-			SE BLOBS EXISTIR
-				RAIO = 0
-				FOR(I < NUMERO DE BLOBS){
-					SE BLOB[I].area > 4500 (NAO SEI PQ ESTE VALOR)
-						RAIO = BLOBS[I].XC - BLOBS[I].X
-
-						CV::CIRCLE(FRUTA)
-						CV::CIRCLE(CENTRO DE MASSA)
-						PRINTAR AREA AO LADO DA FRUTA
-						PRINTAR PERIMETRO AO LADO DA FRUTA
-				}
-		*/
-
 		for (int i = 0; i < blobs; i++) {
 			for (int j = 0; j < blobs2; j++) {
-				if (blob[i].area - blob2[j].area > 20000)
+				if (blob[i].area - blob2[j].area < 20000)
 				{
-					raio = blob[i].xc - blob[i].x;
+					raio = blob2[j].xc - blob2[j].x;
 
-					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(255, 50, 50, 0), 4, 4, 0);
-					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), raio, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
-					str = std::string("Area:").append(std::to_string(blob[i].area));
-					cv::putText(frame, str, cv::Point(blob[i].xc - 20, blob[i].yc - 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
-					str = std::string("Perimetro:").append(std::to_string(blob[i].perimeter));
-					cv::putText(frame, str, cv::Point(blob[i].xc, blob[i].yc), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
+					cv::circle(frame, cv::Point(blob2[j].xc, blob2[j].yc), 1, cv::Scalar(255, 50, 50, 0), 4, 4, 0);
+					cv::circle(frame, cv::Point(blob2[j].xc, blob2[j].yc), raio, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
+					str = std::string("Area:").append(std::to_string(blob2[j].area));
+					cv::putText(frame, str, cv::Point(blob2[j].xc - 20, blob2[j].yc - 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
+					str = std::string("Perimetro:").append(std::to_string(blob2[j].perimeter));
+					cv::putText(frame, str, cv::Point(blob2[j].xc, blob2[j].yc), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 				}
 			}
 		}
