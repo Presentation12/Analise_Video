@@ -100,7 +100,6 @@ int main(void) {
 		bc2 = vc_image_new(video.width, video.height, 1, 255);
 		hsv_blobed = vc_image_new(video.width, video.height, 1, 255);
 		hsv_blobed2 = vc_image_new(video.width, video.height, 1, 255);
-		int raio;
 		int blobs = 0;
 		int blobs2 = 0;
 
@@ -151,12 +150,10 @@ int main(void) {
 		//PARTE PRINTAGENS
 		for (int i = 0; i < blobs; i++) {
 			for (int j = 0; j < blobs2; j++) {
-				if (blob[i].area - blob2[j].area < 20000)
+				if (blob[i].area - blob2[j].area < 15000 && blob2[j].area > 59000)
 				{
-					raio = blob2[j].xc - blob2[j].x;
-
 					cv::circle(frame, cv::Point(blob2[j].xc, blob2[j].yc), 1, cv::Scalar(255, 50, 50, 0), 4, 4, 0);
-					cv::circle(frame, cv::Point(blob2[j].xc, blob2[j].yc), raio, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
+					cv::circle(frame, cv::Point(blob2[j].xc, blob2[j].yc), blob2[j].xc - blob2[j].x, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
 					str = std::string("Area:").append(std::to_string(blob2[j].area));
 					cv::putText(frame, str, cv::Point(blob2[j].xc - 20, blob2[j].yc - 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 					str = std::string("Perimetro:").append(std::to_string(blob2[j].perimeter));
