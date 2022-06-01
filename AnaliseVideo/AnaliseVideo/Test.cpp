@@ -70,6 +70,7 @@ int main(void) {
 
 	cv::Mat frame;
 	while (key != 'q') {
+		int counter;
 		/* Leitura de uma frame do v�deo */
 		capture.read(frame);
 
@@ -92,6 +93,9 @@ int main(void) {
 		str = std::string("N. DA FRAME: ").append(std::to_string(video.nframe));
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);*/
+
+		/*str = std::string("Laranjas: ").append(std::to_string(counter));
+		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);*/
 		
 		//printf("%d\n", video.nframe);
 		// Fa�a o seu c�digo aqui...
