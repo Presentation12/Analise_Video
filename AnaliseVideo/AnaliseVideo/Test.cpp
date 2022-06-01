@@ -34,6 +34,10 @@ int main(void) {
 	IVC* bc_1 = NULL;
 	IVC* bc2 = NULL;
 	IVC* bc2_1 = NULL;
+	IVC* bc2_2 = NULL;
+	IVC* bc2_3 = NULL;
+	IVC* bc2_4 = NULL;
+	IVC* bc2_5 = NULL;
 	IVC* hsv_blobed = NULL;
 	IVC* hsv_blobed2 = NULL;
 
@@ -102,6 +106,10 @@ int main(void) {
 		bc_1 = vc_image_new(video.width, video.height, 1, 255);
 		bc2 = vc_image_new(video.width, video.height, 1, 255);
 		bc2_1 = vc_image_new(video.width, video.height, 1, 255);
+		bc2_2 = vc_image_new(video.width, video.height, 1, 255);
+		bc2_3 = vc_image_new(video.width, video.height, 1, 255);
+		bc2_4 = vc_image_new(video.width, video.height, 1, 255);
+		bc2_5 = vc_image_new(video.width, video.height, 1, 255);
 		hsv_blobed = vc_image_new(video.width, video.height, 1, 255);
 		hsv_blobed2 = vc_image_new(video.width, video.height, 1, 255);
 		int blobs = 0;
@@ -138,12 +146,19 @@ int main(void) {
 		/*vc_binary_open(hsv_s, bc_1, 5);
 		vc_binary_open(hsv_s, bc_2, 5);*/
 
-		vc_binary_close(hsv_s, bc, 5);
-		vc_binary_close(bc, bc_1, 5);
+		//DEFINITIVO NO BACKGROUND
+		vc_binary_close(hsv_s, bc, 7);
+		vc_binary_close(bc, bc_1, 7);
 
 		/*vc_binary_close(hsv_s2, bc2, 3);*/
+
+		//DEFINITIVO NA FRUTA
 		vc_binary_close(hsv_s2, bc2, 7);
-		vc_binary_open(bc2, bc2_1, 7);
+		vc_binary_close(bc2, bc2_1, 7);
+		vc_binary_open(bc2_1, bc2_2, 7);
+		vc_binary_open(bc2_2, bc2_3, 7);
+		vc_binary_open(bc2_3, bc2_4, 7);
+		//vc_gray_edge_prewitt(bc2_4, bc2_5, 0.2);
 
 		//FAZER BINARY BLOB LABELLING E TER A INFO
 		// TIRAR COMMENT
@@ -152,28 +167,35 @@ int main(void) {
 		vc_binary_blob_info(hsv_blobed, blob, blobs);
 		vc_binary_blob_info(hsv_blobed2, blob2, blobs2);
 
-		memcpy(frame.data, src->data, video.width * video.height * 3);
+		memcpy(frame.data, src->data, video.width * video.height * 1);
 
 		//PARTE PRINTAGENS
 		for (int j = 0; j < blobs2; j++) {
 			for (int i = 0; i < blobs; i++) {
-				/*if (
-					(blob2[i].x > blob[j].x && blob2[i].x < (blob[j].x + blob[j].width) ||
-					 blob[j].x > blob2[i].x && blob[j].x < (blob2[i].x + blob2[i].width))
+				if (
+					//Caso o píxel final do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida
+					// (eixo do x)
+					(blob2[j].x >= blob[i].x && blob2[j].x <= (blob[i].x + blob[i].width) ||
+					 blob[i].x >= blob2[j].x && blob[i].x <= (blob2[j].x + blob2[j].width))
 					&&
-					(blob2[i].y > blob[j].y && blob2[i].y < (blob[j].y + blob[j].height) ||
-						blob[j].y > blob2[i].y && blob[j].y < (blob2[i].y + blob2[i].height))
 
-					&& (float)blob2[j].area / (float)blob[i].area >= 0.40 && (float)blob2[j].area / (float)blob[i].area <= 1.30
+					//Caso o píxel final do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida
+					// (eixo do y)
+					(blob2[j].y >= blob[i].y && blob2[j].y <= (blob[i].y + blob[i].height) ||
+						blob[i].y >= blob2[j].y && blob[i].y <= (blob2[j].y + blob2[j].height))
+					
+					//Caso a diferença de área dos 2 blobs seja abaixo de 15% (valor obtido por testes)
+					&& (float)blob2[j].area / (float)blob[i].area >= 0.85 && (float)blob2[j].area / (float)blob[i].area <= 1.15
+
+					//Caso a imagem esteja dentro da frame
 					&& blob2[j].x > 1 && (blob2[j].x + blob2[j].width) < src->width-1 && 
-					blob2[j].y > 1 && (blob2[j].y + blob2[j].height) < src->height - 1 )*/
-				if(blob[i].area > 81000)
+					blob2[j].y > 1 && (blob2[j].y + blob2[j].height) < src->height - 1 )
 				{
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(255, 50, 50, 0), 4, 4, 0);
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), blob[i].xc - blob[i].x, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
-					str = std::string("Area:").append(std::to_string(blob[i].area));
+					str = std::string("Area:").append(std::to_string((float)blob[i].area * 55 / 280));
 					cv::putText(frame, str, cv::Point(blob[i].xc - 20, blob[i].yc - 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
-					str = std::string("Perimetro:").append(std::to_string(blob[i].perimeter));
+					str = std::string("Perimetro:").append(std::to_string((float)blob[i].perimeter * 55 / 280));
 					cv::putText(frame, str, cv::Point(blob[i].xc, blob[i].yc), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 				}
 			}
@@ -193,7 +215,13 @@ int main(void) {
 	vc_image_free(rgb);
 	vc_image_free(hsv);
 	vc_image_free(bc);
+	vc_image_free(bc_1);
 	vc_image_free(bc2);
+	vc_image_free(bc2_1);
+	vc_image_free(bc2_2);
+	vc_image_free(bc2_3);
+	vc_image_free(bc2_4);
+	vc_image_free(bc2_5);
 	vc_image_free(hsv_s);
 	vc_image_free(hsv_s2);
 	vc_image_free(hsv_s3);
