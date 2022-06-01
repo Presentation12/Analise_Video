@@ -373,7 +373,6 @@ int vc_write_image(char *filename, IVC *image)
 	return 0;
 }
 
-// Negativo de uma imagem em tons de cinzento (1 canal)
 int vc_gray_negative(IVC *srcdst)
 {
 	unsigned char *data = (unsigned char *)srcdst->data;
@@ -384,13 +383,11 @@ int vc_gray_negative(IVC *srcdst)
 	int x, y;
 	long int pos;
 
-	// Verificação de erros
 	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL))
 		return 0;
 	if (channels != 1)
 		return 0;
 
-	// Inverte a imagem Gray
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
@@ -404,7 +401,6 @@ int vc_gray_negative(IVC *srcdst)
 	return 1;
 }
 
-// Negativo de uma imagem RGB
 int vc_rgb_negative(IVC *srcdst)
 {
 	unsigned char *data = (unsigned char *)srcdst->data;
@@ -415,13 +411,11 @@ int vc_rgb_negative(IVC *srcdst)
 	int x, y;
 	long int pos;
 
-	// Verificação de erros
 	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL))
 		return 0;
 	if (channels != 3)
 		return 0;
 
-	// Inverte a imagem Gray
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
@@ -447,20 +441,18 @@ int vc_rgb_get_red_gray(IVC *srcdst)
 	int x, y;
 	long int pos;
 
-	// Verificação de erros
 	if ((srcdst->width <= 0) || (srcdst->height <= 0) || srcdst->data == NULL)
 		return 0;
 	if (channels != 3)
 		return 0;
 
-	// Extrai componente Red
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
 		{
 			pos = y * bytesperline + x * channels;
-			data[pos + 1] = data[pos]; // Green;
-			data[pos + 2] = data[pos]; // Blue
+			data[pos + 1] = data[pos];
+			data[pos + 2] = data[pos];
 		}
 	}
 	return 1;
@@ -476,20 +468,18 @@ int vc_rgb_get_green_gray(IVC *srcdst)
 	int x, y;
 	long int pos;
 
-	// Verificação de erros
 	if ((srcdst->width <= 0) || (srcdst->height <= 0) || srcdst->data == NULL)
 		return 0;
 	if (channels != 3)
 		return 0;
 
-	// Extrai componente Green
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
 		{
 			pos = y * bytesperline + x * channels;
-			data[pos] = data[pos + 1];	   // Red;
-			data[pos + 2] = data[pos + 1]; // Blue
+			data[pos] = data[pos + 1];
+			data[pos + 2] = data[pos + 1];
 		}
 	}
 	return 1;
@@ -505,20 +495,18 @@ int vc_rgb_get_blue_gray(IVC *srcdst)
 	int x, y;
 	long int pos;
 
-	// Verificação de erros
 	if ((srcdst->width <= 0) || (srcdst->height <= 0) || srcdst->data == NULL)
 		return 0;
 	if (channels != 3)
 		return 0;
 
-	// Extrai componente Blue
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
 		{
 			pos = y * bytesperline + x * channels;
-			data[pos] = data[pos + 2];	   // Red;
-			data[pos + 1] = data[pos + 2]; // Green
+			data[pos] = data[pos + 2];
+			data[pos + 1] = data[pos + 2];
 		}
 	}
 	return 1;
@@ -541,7 +529,7 @@ int vc_rgb_to_gray(IVC *src, IVC *dst)
 	long int pos_src, pos_dst;
 	float rf, gf, bf;
 
-	// Verificação de erros
+	
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -560,8 +548,7 @@ int vc_rgb_to_gray(IVC *src, IVC *dst)
 			gf = (float)datasrc[pos_src + 1];
 			bf = (float)datasrc[pos_src + 2];
 
-			datadst[pos_dst] = (unsigned char)((rf * 0.299) + (gf * 0.587) + (bf * 0.114)); // media ponderada, mais proxima do olho humano
-																							// datadst[pos_dst] = (unsigned char) ((rf * 0.333) + (gf * 0.333) + (bf * 0.333));
+			datadst[pos_dst] = (unsigned char)((rf * 0.299) + (gf * 0.587) + (bf * 0.114));
 		}
 	}
 	return 1;
@@ -583,7 +570,6 @@ int vc_rgb_to_hsv(IVC *src, IVC *dst)
 	float value, saturation, hue;
 	float rf, gf, bf;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -779,7 +765,6 @@ int vc_scale_gray_to_rgb(IVC *src, IVC *dst)
 	int x, y;
 	long int pos_src, pos_dst;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -814,7 +799,7 @@ int vc_scale_gray_to_rgb(IVC *src, IVC *dst)
 				datadst[pos_dst + 2] = 0;
 			}
 			else
-			{ // pode ser só else (?)
+			{
 				datadst[pos_dst] = 255;
 				datadst[pos_dst + 1] = (1 - ((value - 192) / 64)) * 255;
 				datadst[pos_dst + 2] = 0;
@@ -840,7 +825,6 @@ int vc_gray_to_binary(IVC *src, IVC *dst, int threshold)
 
 	long int pos;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -884,7 +868,6 @@ int vc_gray_to_binary_global_mean(IVC *src, IVC *dst)
 
 	long int pos;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -942,7 +925,6 @@ int vc_gray_to_binary_midpoint_mean(IVC *src, IVC *dst, int kernel)
 	int min;
 	float threshold;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -995,7 +977,6 @@ int vc_gray_to_binary_midpoint_mean(IVC *src, IVC *dst, int kernel)
 	return 1;
 }
 
-// NOT DONE! PROXIMA AULA
 int vc_gray_to_binary_bernsen_mean(IVC *src, IVC *dst, int kernel, int cmin)
 {
 	unsigned char *datasrc = (unsigned char *)src->data;
@@ -1016,7 +997,6 @@ int vc_gray_to_binary_bernsen_mean(IVC *src, IVC *dst, int kernel, int cmin)
 	int min;
 	float threshold;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -1088,7 +1068,6 @@ int vc_binary_dilate(IVC *src, IVC *dst, int kernel)
 
 	int is_first_plan;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -1150,7 +1129,6 @@ int vc_binary_erode(IVC *src, IVC *dst, int kernel)
 
 	int is_not_first_plan;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -1230,7 +1208,6 @@ int vc_gray_erode(IVC *src, IVC *dst, int kernel)
 
 	int min;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -1285,7 +1262,6 @@ int vc_gray_dilate(IVC *src, IVC *dst, int kernel)
 
 	int max;
 
-	// Verificação de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL))
 		return 0;
 	if ((src->width != dst->width) || (src->height != dst->height))
@@ -1338,6 +1314,8 @@ int vc_gray_close(IVC *src, IVC *dst, int kernel)
 	vc_gray_erode(image_aux, dst, kernel);
 	vc_image_free(image_aux);
 }
+
+//Blob labelling em IVC
 /*
 int vc_binary_blob_labelling(IVC *src, IVC *dst)
 {
@@ -1885,7 +1863,6 @@ int vc_gray_histogram_equalization(IVC *src, IVC *dst)
 	int bytesperline = src->bytesperline;
 	int channels = src->channels;
 
-	// Verifica��o de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL) || (src->width != dst->width) || src->height != dst->height)
 		return 0;
 	if (channels != 1)
@@ -1920,7 +1897,6 @@ int vc_gray_edge_prewitt(IVC* src, IVC* dst, float threshold)
 	long int posX, posA, posB, posC, posD, posE, posF, posG, posH;
 	float histmax, hist[256] = { 0.0f };
 
-	// VerificaCAo de erros
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
 	if ((src->width != dst->width) || (src->height != dst->height) || (src->channels != dst->channels)) return 0;
 	if (channels != 1) return 0;
@@ -1931,10 +1907,6 @@ int vc_gray_edge_prewitt(IVC* src, IVC* dst, float threshold)
 	{
 		for (x = 1; x < width - 1; x++)
 		{
-			// PosA PosB PosC
-			// PosD PosX PosE
-			// PosF PosG PosH
-
 			posA = (y - 1) * bytesperline + (x - 1) * channels;
 			posB = (y - 1) * bytesperline + x * channels;
 			posC = (y - 1) * bytesperline + (x + 1) * channels;
@@ -1945,10 +1917,6 @@ int vc_gray_edge_prewitt(IVC* src, IVC* dst, float threshold)
 			posG = (y + 1) * bytesperline + x * channels;
 			posH = (y + 1) * bytesperline + (x + 1) * channels;
 
-			// PosA*(-1) PosB*0 PosC*(1)
-			// PosD*(-1) PosX*0 PosE*(1)
-			// PosF*(-1) PosG*0 PosH*(1)
-
 			sumx = datasrc[posA] * -1;
 			sumx += datasrc[posD] * -1;
 			sumx += datasrc[posF] * -1;
@@ -1956,11 +1924,7 @@ int vc_gray_edge_prewitt(IVC* src, IVC* dst, float threshold)
 			sumx += datasrc[posC] * +1;
 			sumx += datasrc[posE] * +1;
 			sumx += datasrc[posH] * +1;
-			sumx = sumx / 3; // 3 = 1 + 1 + 1
-
-			// PosA*(-1) PosB*(-1) PosC*(-1)
-			// PosD*0    PosX*0    PosE*0
-			// PosF*(1)  PosG*(1)  PosH*(1)
+			sumx = sumx / 3;
 
 			sumy = datasrc[posA] * -1;
 			sumy += datasrc[posB] * -1;
@@ -1969,43 +1933,27 @@ int vc_gray_edge_prewitt(IVC* src, IVC* dst, float threshold)
 			sumy += datasrc[posF] * +1;
 			sumy += datasrc[posG] * +1;
 			sumy += datasrc[posH] * +1;
-			sumy = sumy / 3; // 3 = 1 + 1 + 1
+			sumy = sumy / 3;
 
-			//datadst[posX] = (unsigned char)sqrt((double)(sumx*sumx + sumy*sumy));
 			datadst[posX] = (unsigned char)(sqrt((double)(sumx * sumx + sumy * sumy)) / sqrt(2.0));
-			// ExplicaCAo:
-			// Queremos que no caso do pior cenário, em que sumx = sumy = 255, o resultado
-			// da operaCAo se mantenha no intervalo de valores admitido, isto é, entre [0, 255].
-			// Se se considerar que:
-			// max = 255
-			// Então,
-			// sqrt(pow(max,2) + pow(max,2)) * k = max <=> sqrt(2*pow(max,2)) * k = max <=> k = max / (sqrt(2) * max) <=> 
-			// k = 1 / sqrt(2)
+			
 		}
 	}
 
-	// Calcular o histograma com o valor das magnitudes
 	for (i = 0; i < size; i++)
 	{
 		hist[datadst[i]]++;
 	}
 
-	// Definir o threshold.
-	// O threshold é definido pelo nível de intensidade (das magnitudes)
-	// quando se atinge uma determinada percentagem de pixeis, definida pelo utilizador.
-	// Por exemplo, se o parâmetro 'th' tiver valor 0.8, significa the o threshold será o 
-	// nível de magnitude, abaixo do qual estão pelo menos 80% dos pixeis.
 	histmax = 0.0f;
 	for (i = 0; i <= 255; i++)
 	{
 		histmax += hist[i];
 
-		// th = Prewitt Threshold
 		if (histmax >= (((float)size) * threshold)) break;
 	}
 	histthreshold = i == 0 ? 1 : i;
 
-	// Aplicada o threshold
 	for (i = 0; i < size; i++)
 	{
 		if (datadst[i] >= (unsigned char)histthreshold) datadst[i] = 255;
@@ -2027,10 +1975,8 @@ int vc_bgr_to_rgb(IVC* src, IVC* dst)
 	int x, y, i, j;
 	long int pos;
 
-	//Verificacao de erros
 	if ((width <= 0) || (height <= 0) || (data == NULL)) return 0;
 	if (channels != 3 || channels_dst != 3) return 0;
-	//Verifica se existe blobs
 
 	for (y = 0; y < height; y++)
 	{

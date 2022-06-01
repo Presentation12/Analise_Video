@@ -179,18 +179,16 @@ int main(void) {
 		for (int j = 0; j < blobs2; j++) {
 			for (int i = 0; i < blobs; i++) {
 				if (
-					//Caso o píxel final do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida
+					//Se o píxel do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida ou vice-versa
 					// (eixo do x)
-					(blob2[j].x >= blob[i].x && blob2[j].x <= (blob[i].x + blob[i].width) ||
-					 blob[i].x >= blob2[j].x && blob[i].x <= (blob2[j].x + blob2[j].width))
+					(blob2[j].x >= blob[i].x && blob2[j].x <= (blob[i].x + blob[i].width) || blob[i].x >= blob2[j].x && blob[i].x <= (blob2[j].x + blob2[j].width))
 					&&
 
-					//Caso o píxel final do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida
+					//Se o píxel do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida ou vice-versa
 					// (eixo do y)
-					(blob2[j].y >= blob[i].y && blob2[j].y <= (blob[i].y + blob[i].height) ||
-						blob[i].y >= blob2[j].y && blob[i].y <= (blob2[j].y + blob2[j].height))
+					(blob2[j].y >= blob[i].y && blob2[j].y <= (blob[i].y + blob[i].height) || blob[i].y >= blob2[j].y && blob[i].y <= (blob2[j].y + blob2[j].height))
 					
-					//Caso a diferença de área dos 2 blobs seja abaixo de 15% (valor obtido por testes)
+					//Caso a diferença de área dos 2 blobs seja de 15% (valor obtido por testes)
 					&& (float)blob2[j].area / (float)blob[i].area >= 0.85 && (float)blob2[j].area / (float)blob[i].area <= 1.15
 
 					//Caso a imagem esteja dentro da frame
