@@ -43,6 +43,7 @@ int main(void) {
 	IVC* hsv_blobed2 = NULL;
 	int laranjas_counter = 0;
 	std::list<OVC> blobshist;
+	std::string calibre = "Invalido";
 
 	/* Leitura de v�deo de um ficheiro */
 	/* NOTA IMPORTANTE:
@@ -137,14 +138,12 @@ int main(void) {
 		//FAZER HSV SEGMENTATION
 		
 		//MESA
-		// TIRAR COMMENT
 		vc_hsv_segmentation(hsv, hsv_s, 0, 360, 0, 40, 13, 100);
-		// TIRAR COMMENT
 		vc_invert_binary(hsv_s);
 
 		//FRUTA
-		//vc_hsv_segmentation(hsv, hsv_s, 15, 30, 40, 100, 0, 100);
 		vc_hsv_segmentation(hsv, hsv_s2, 3, 35, 40, 100, 0, 95);
+		//vc_hsv_segmentation(hsv, hsv_s, 15, 30, 40, 100, 0, 100);
 		//vc_hsv_segmentation_fruta(hsv, hsv_s2, 0, 12, 80, 100, 60, 100);
 		//vc_hsv_segmentation(hsv, hsv_s3, 15, 30, 50, 100, 25, 90);
 		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
@@ -216,14 +215,41 @@ int main(void) {
 					}*/
 
 					//if ((blob[i].yc < (video.height / 3) + 2 && blob[i].yc > (video.height / 3) - 2)) laranjas_counter++;
+
+					//Incrementar numero de laranjas totais
 					if (blob[i].yc >= ((video.height + 8) / 2) && blob[i].yc < ((video.height + 26) / 2)) laranjas_counter++;
 
+					//Desenho de área delimitadora e centro de gravidade
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(255, 50, 50, 0), 4, 4, 0);
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), blob[i].xc - blob[i].x, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
+
+					//Zona de texto informativos sobre as laranjas
 					str = std::string("Area:").append(std::to_string((float)blob[i].area * 55 / 280));
-					cv::putText(frame, str, cv::Point(blob[i].xc - 20, blob[i].yc - 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
+					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 60), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 					str = std::string("Perimetro:").append(std::to_string((float)blob[i].perimeter * 55 / 280));
-					cv::putText(frame, str, cv::Point(blob[i].xc, blob[i].yc), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
+					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 90), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
+
+					if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 53 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 60) calibre = "13";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 56 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 63) calibre = "12";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 58 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 66) calibre = "11";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 60 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 68) calibre = "10";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 62 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 70) calibre = "9";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 64 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 73) calibre = "8";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 67 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 76) calibre = "7";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 70 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 80) calibre = "6";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 73 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 84) calibre = "5";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 77 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 88) calibre = "4";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 81 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 92) calibre = "3";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 84 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 96) calibre = "2";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 87 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 100) calibre = "1";
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 100) calibre = "0";
+
+					if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 78) calibre.append(" - XXX");
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 67 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 78) calibre.append(" - XX");
+					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 63 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 74) calibre.append(" - X");
+					
+					str = std::string("Calibre:").append(calibre);
+					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 120), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 				}
 			}
 		}
