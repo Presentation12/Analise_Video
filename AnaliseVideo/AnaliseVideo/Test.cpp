@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <list>
 #include <string>
 #include <opencv2\opencv.hpp>
 #include <opencv2\core.hpp>
@@ -40,6 +41,8 @@ int main(void) {
 	IVC* bc2_5 = NULL;
 	IVC* hsv_blobed = NULL;
 	IVC* hsv_blobed2 = NULL;
+	int laranjas_counter = 0;
+	std::list<OVC> blobshist;
 
 	/* Leitura de v�deo de um ficheiro */
 	/* NOTA IMPORTANTE:
@@ -94,8 +97,8 @@ int main(void) {
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
 		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);*/
 
-		/*str = std::string("Laranjas: ").append(std::to_string(counter));
-		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);*/
+		str = std::string("Laranjas: ").append(std::to_string(laranjas_counter));
+		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
 		
 		//printf("%d\n", video.nframe);
 		// Fa�a o seu c�digo aqui...
@@ -195,6 +198,26 @@ int main(void) {
 					&& blob2[j].x > 1 && (blob2[j].x + blob2[j].width) < src->width-1 && 
 					blob2[j].y > 1 && (blob2[j].y + blob2[j].height) < src->height - 1 )
 				{
+					/*if (blobshist.size() == 0) {
+						blobshist.push_front(blob2[j]);
+						laranjas_counter++;
+					}
+
+					for (OVC obj : blobshist)
+					{
+						//if ((float)obj.area / (float)blob2[j].area < 0.955 ||
+						//(float)obj.area / (float)blob2[j].area > 1.035)
+						if(!(obj.xc > blob[i].xc - blob[i].x && obj.xc < blob[i].xc + blob[i].x &&
+							obj.yc > blob[i].yc - blob[i].y && obj.yc < blob[i].yc + blob[i].y))
+						{
+							blobshist.push_front(blob[i]);
+							laranjas_counter++;
+						}
+					}*/
+
+					//if ((blob[i].yc < (video.height / 3) + 2 && blob[i].yc > (video.height / 3) - 2)) laranjas_counter++;
+					if (blob[i].yc >= ((video.height + 8) / 2) && blob[i].yc < ((video.height + 26) / 2)) laranjas_counter++;
+
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(255, 50, 50, 0), 4, 4, 0);
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), blob[i].xc - blob[i].x, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
 					str = std::string("Area:").append(std::to_string((float)blob[i].area * 55 / 280));
