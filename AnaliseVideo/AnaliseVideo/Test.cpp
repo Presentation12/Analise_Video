@@ -48,6 +48,10 @@ extern "C" {
 
 	//if ((blob[i].yc < (video.height / 3) + 2 && blob[i].yc > (video.height / 3) - 2)) laranjas_counter++;
 
+	//Tentativas de desenhar retangulo delimitador
+	//cv::Rect rect(blob[i].xc, blob[i].yc - blob[i].y, blob[i].width, blob[i].height);
+	//cv::rectangle(frame, rect, cv::Scalar(255, 0, 0), 0);
+
 */
 
 int main(void) {
@@ -211,9 +215,6 @@ int main(void) {
 
 					cv::Rect rect(blob[i].xc - blob[i].width / 2, blob[i].yc - blob[i].height / 2, blob[i].width, blob[i].height);
 					cv::rectangle(frame, rect, cv::Scalar(255, 0, 0), 0);
-
-					//cv::Rect rect(blob[i].xc, blob[i].yc - blob[i].y, blob[i].width, blob[i].height);
-					//cv::rectangle(frame, rect, cv::Scalar(255, 0, 0), 0);
 
 					//Zona de texto informativo sobre as laranjas
 					str = std::string("Area:").append(std::to_string((int)blob[i].area * 55 / 280)).append(" mm");
