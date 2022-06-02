@@ -87,7 +87,16 @@ int main(void) {
 	int laranjas_counter = 0;
 	int blobs;
 	int blobs2;
+	int pontuacao;
+	long int pos;
+	long int pos_inicial;
+	int valueMax;
+	int valueMin;
+	int saturationMax;
+	int saturationMin;
+	int hasGreen;
 	std::string calibre = "Invalido";
+	std::string classificacao = "Invalido";
 
 	/* Leitura de v�deo de um ficheiro */
 	/* NOTA IMPORTANTE:
@@ -118,7 +127,6 @@ int main(void) {
 
 	cv::Mat frame;
 	while (key != 'q') {
-		int counter;
 		/* Leitura de uma frame do v�deo */
 		capture.read(frame);
 
@@ -148,6 +156,7 @@ int main(void) {
 		hsv_blobed2 = vc_image_new(video.width, video.height, 1, 255);
 		blobs = 0;
 		blobs2 = 0;
+		pontuacao = 0;
 
 		// Copia dados de imagem da estrutura cv::Mat para uma estrutura IVC
 		memcpy(src->data, frame.data, video.width * video.height * 3);
@@ -184,7 +193,7 @@ int main(void) {
 		vc_binary_blob_info(hsv_blobed, blob, blobs);
 		vc_binary_blob_info(hsv_blobed2, blob2, blobs2);
 
-		memcpy(frame.data, src->data, video.width * video.height * 1);
+		memcpy(frame.data, src->data, video.width * video.height * 3);
 
 		//Parte de printagens em cada frame
 		
@@ -209,18 +218,70 @@ int main(void) {
 					//Incrementar número de laranjas totais
 					if (blob[i].yc >= ((video.height + 8) / 2) && blob[i].yc < ((video.height + 26) / 2)) laranjas_counter++;
 
+					//Avaliar Deformação
+					if ((float)blob[i].width / blob[i].height >= 0.95 && (float)blob[i].width / blob[i].height <= 1.05) pontuacao++;
+					else if ((float)blob[i].width / blob[i].height >= 0.90 && (float)blob[i].width / blob[i].height <= 1.10) pontuacao += 2;
+
+					//Avaliar coloração
+					valueMax = 0;
+					valueMin = 100;
+					saturationMax = 0;
+					saturationMin = 100;
+					hasGreen = 0;
+					
+					for (int h = blob[i].y; h < blob[i].y+blob[i].height; h++) {
+						for (int g = blob[i].x; g < blob[i].x+blob[i].width; g++) {
+							pos = h * hsv->bytesperline + g * hsv->channels;
+							
+							//40, 50
+							//70, 85
+							//20, 30
+							if ((hsv->data[pos] >= 36 && hsv->data[pos] <= 65) && (hsv->data[pos + 1] >= 65 && hsv->data[pos + 1] <= 85) && (hsv->data[pos + 2] >= 20 && hsv->data[pos + 2] <= 40)
+								&& hasGreen == 0) {
+								hasGreen == 1;
+							}
+
+							//3, 35
+							//40, 100
+							//0, 95
+							if ((hsv->data[pos] >= 3 && hsv->data[pos] <= 35) && (hsv->data[pos + 1] >= 40 && hsv->data[pos + 1] <= 100) && (hsv->data[pos + 2] >= 0 && hsv->data[pos + 2] <= 95)) {
+								if (hsv->data[pos + 1] < saturationMin) saturationMin = hsv->data[pos + 1];
+								else if (hsv->data[pos + 1] > saturationMax) saturationMax = hsv->data[pos + 1];
+
+								if (hsv->data[pos + 2] < valueMin) valueMin = hsv->data[pos + 2];
+								else if (hsv->data[pos + 2] > valueMax) valueMax = hsv->data[pos + 2];
+							}
+						}
+					}
+
+					if(saturationMax > 55 || valueMax > 55) pontuacao += 3;
+					else if ((float)saturationMin / saturationMax >= 0.95 && (float)saturationMin / saturationMax <= 1.05) pontuacao++;
+					else if ((float)saturationMin / saturationMax >= 0.90 && (float)saturationMin / saturationMax <= 1.10) pontuacao+=2;
+
+					//Atribuição de classificação
+					classificacao = "Extra";
+
+					if (pontuacao == 1) classificacao = "I";
+					else if (pontuacao >= 2) classificacao = "II";
+					
+					if (classificacao == "II" && hasGreen == 0) classificacao = "III";
+
 					//Desenho de área delimitadora e centro de gravidade
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(0, 255, 0, 0), 5);
+					cv::circle(frame, cv::Point(blob[i].x, blob[i].y), 1, cv::Scalar(0, 255, 0, 0), 5);
+					cv::circle(frame, cv::Point(blob[i].x + blob[i].width,blob[i].y + blob[i].height), 1, cv::Scalar(0, 255, 0, 0), 5);
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), blob[i].xc - blob[i].x, cv::Scalar(0, 0, 255, 0), 0);
 
 					cv::Rect rect(blob[i].xc - blob[i].width / 2, blob[i].yc - blob[i].height / 2, blob[i].width, blob[i].height);
 					cv::rectangle(frame, rect, cv::Scalar(255, 0, 0), 0);
 
 					//Zona de texto informativo sobre as laranjas
-					str = std::string("Area:").append(std::to_string((int)blob[i].area * 55 / 280)).append(" mm");
+					str = std::string("Area: ").append(std::to_string((int)blob[i].area * 55 / 280)).append(" mm");
 					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 60), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
-					str = std::string("Perimetro:").append(std::to_string((int)blob[i].perimeter * 55 / 280)).append(" mm");
+					str = std::string("Perimetro: ").append(std::to_string((int)blob[i].perimeter * 55 / 280)).append(" mm");
 					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 90), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
+					str = std::string("Classificacao: ").append(classificacao);
+					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 120), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 
 					if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 53 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 60) calibre = "13";
 					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 56 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 63) calibre = "12";
@@ -241,8 +302,8 @@ int main(void) {
 					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 67 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 78) calibre.append(" - XX");
 					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 63 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 74) calibre.append(" - X");
 					
-					str = std::string("Calibre:").append(calibre);
-					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 120), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
+					str = std::string("Calibre: ").append(calibre);
+					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 150), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 				}
 			}
 		}
