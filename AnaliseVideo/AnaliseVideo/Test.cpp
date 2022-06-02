@@ -94,9 +94,13 @@ int main(void) {
 	int valueMin;
 	int saturationMax;
 	int saturationMin;
+	int saturationMin;
+	int diametroMax;
+	int diametroMin;
 	int hasGreen;
 	std::string calibre = "Invalido";
 	std::string classificacao = "Invalido";
+	std::string homogeneidade = "Invalido";
 
 	/* Leitura de v�deo de um ficheiro */
 	/* NOTA IMPORTANTE:
@@ -228,6 +232,8 @@ int main(void) {
 					valueMin = 100;
 					saturationMax = 0;
 					saturationMin = 100;
+					diametroMax = 0;
+					diametroMin = 100;
 					hasGreen = 0;
 					
 					for (int h = blob[i].y; h < blob[i].y+blob[i].height; h++) {
