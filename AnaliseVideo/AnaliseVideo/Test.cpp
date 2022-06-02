@@ -10,6 +10,45 @@ extern "C" {
 #include "vc.h"
 }
 
+//TESTES FEITOS
+/*
+	//printf("%d\n", video.nframe);
+
+	//Parte segmentacao da mesa e laranjas
+		//vc_hsv_segmentation(hsv, hsv_s, 15, 30, 40, 100, 0, 100);
+		//vc_hsv_segmentation_fruta(hsv, hsv_s2, 0, 12, 80, 100, 60, 100);
+		//vc_hsv_segmentation(hsv, hsv_s3, 15, 30, 50, 100, 25, 90);
+		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
+
+		//vc_binary_open(hsv_s, bc, 5);
+		/*vc_binary_open(bc, bc_1, 5);
+		vc_binary_open(bc_1, bc_2, 5);
+		/*vc_binary_close(hsv_s2, bc2, 3);
+	
+	//Tentativas de algoritmos para contar laranjas
+	std::list<OVC> blobshist;
+
+	/*if (blobshist.size() == 0) {
+		blobshist.push_front(blob2[j]);
+		laranjas_counter++;
+	}
+
+	for (OVC obj : blobshist)
+	{
+		//Incomplete
+		//if ((float)obj.area / (float)blob2[j].area < 0.955 ||
+		//(float)obj.area / (float)blob2[j].area > 1.035)
+		if(!(obj.xc > blob[i].xc - blob[i].x && obj.xc < blob[i].xc + blob[i].x &&
+			obj.yc > blob[i].yc - blob[i].y && obj.yc < blob[i].yc + blob[i].y))
+		{
+			blobshist.push_front(blob[i]);
+			laranjas_counter++;
+		}
+	}
+
+	//if ((blob[i].yc < (video.height / 3) + 2 && blob[i].yc > (video.height / 3) - 2)) laranjas_counter++;
+
+*/
 
 int main(void) {
 	// V�deo
@@ -42,7 +81,8 @@ int main(void) {
 	IVC* hsv_blobed = NULL;
 	IVC* hsv_blobed2 = NULL;
 	int laranjas_counter = 0;
-	std::list<OVC> blobshist;
+	int blobs;
+	int blobs2;
 	std::string calibre = "Invalido";
 
 	/* Leitura de v�deo de um ficheiro */
@@ -84,24 +124,6 @@ int main(void) {
 		/* N�mero da frame a processar */
 		video.nframe = (int)capture.get(cv::CAP_PROP_POS_FRAMES);
 
-		/* Exemplo de inser��o texto na frame */
-		/*str = std::string("RESOLUCAO: ").append(std::to_string(video.width)).append("x").append(std::to_string(video.height));
-		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
-		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
-		str = std::string("TOTAL DE FRAMES: ").append(std::to_string(video.ntotalframes));
-		cv::putText(frame, str, cv::Point(20, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
-		cv::putText(frame, str, cv::Point(20, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
-		str = std::string("FRAME RATE: ").append(std::to_string(video.fps));
-		cv::putText(frame, str, cv::Point(20, 75), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
-		cv::putText(frame, str, cv::Point(20, 75), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
-		str = std::string("N. DA FRAME: ").append(std::to_string(video.nframe));
-		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
-		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);*/
-
-		str = std::string("Laranjas: ").append(std::to_string(laranjas_counter));
-		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
-		
-		//printf("%d\n", video.nframe);
 		// Fa�a o seu c�digo aqui...
 		//CRIAR IVCS NECESSARIOS
 		src = vc_image_new(video.width, video.height, 3, 255);
@@ -120,54 +142,39 @@ int main(void) {
 		bc2_5 = vc_image_new(video.width, video.height, 1, 255);
 		hsv_blobed = vc_image_new(video.width, video.height, 1, 255);
 		hsv_blobed2 = vc_image_new(video.width, video.height, 1, 255);
-		int blobs = 0;
-		int blobs2 = 0;
+		blobs = 0;
+		blobs2 = 0;
 
-		//CRIAR OVC PARA BLOBS
-		//NUM BLOBS
-		// Cria uma nova imagem IVC
 		// Copia dados de imagem da estrutura cv::Mat para uma estrutura IVC
 		memcpy(src->data, frame.data, video.width * video.height * 3);
 
-		//PASSAR BGR (FORMATO VIDEO) PARA RGB
+		//Passar BGR (formato vídeo) para RGB
 		vc_bgr_to_rgb(src, rgb);
 
-		//PASSAR RGB -> HSV (???)
+		//Passar RGB para HSV
 		vc_rgb_to_hsv(rgb, hsv);
 
-		//FAZER HSV SEGMENTATION
+		//Fazer HSV segmentation de 2 prespetivas
 		
-		//MESA
+		//Segmentation Mesa (background)
 		vc_hsv_segmentation(hsv, hsv_s, 0, 360, 0, 40, 13, 100);
+		//Como a mesa ficou a branco e fruta a preto, de forma a favorecer as comparações, foi feita uma inversão de tonalidades
 		vc_invert_binary(hsv_s);
 
-		//FRUTA
+		//Segmentation Laranjas
 		vc_hsv_segmentation(hsv, hsv_s2, 3, 35, 40, 100, 0, 95);
-		//vc_hsv_segmentation(hsv, hsv_s, 15, 30, 40, 100, 0, 100);
-		//vc_hsv_segmentation_fruta(hsv, hsv_s2, 0, 12, 80, 100, 60, 100);
-		//vc_hsv_segmentation(hsv, hsv_s3, 15, 30, 50, 100, 25, 90);
-		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
-		 
-		//vc_binary_open(hsv_s, bc, 5);
-		/*vc_binary_open(hsv_s, bc_1, 5);
-		vc_binary_open(hsv_s, bc_2, 5);*/
 
-		//DEFINITIVO NO BACKGROUND
+		//Operações morfológicas para melhoramento de regiões segmentadas
 		vc_binary_close(hsv_s, bc, 7);
 		vc_binary_close(bc, bc_1, 7);
 
-		/*vc_binary_close(hsv_s2, bc2, 3);*/
-
-		//DEFINITIVO NA FRUTA
 		vc_binary_close(hsv_s2, bc2, 7);
 		vc_binary_close(bc2, bc2_1, 7);
 		vc_binary_open(bc2_1, bc2_2, 7);
 		vc_binary_open(bc2_2, bc2_3, 7);
 		vc_binary_open(bc2_3, bc2_4, 7);
-		//vc_gray_edge_prewitt(bc2_4, bc2_5, 0.2);
 
-		//FAZER BINARY BLOB LABELLING E TER A INFO
-		// TIRAR COMMENT
+		//Fazer etiquetagem e guardar informações dos blobs detetados em cada segmentação
 		OVC* blob = vc_binary_blob_labelling(bc_1, hsv_blobed, &blobs);
 		OVC* blob2 = vc_binary_blob_labelling(bc2_1, hsv_blobed2, &blobs2);
 		vc_binary_blob_info(hsv_blobed, blob, blobs);
@@ -175,56 +182,38 @@ int main(void) {
 
 		memcpy(frame.data, src->data, video.width * video.height * 1);
 
-		//PARTE PRINTAGENS
+		//Parte de printagens em cada frame
+		
+		//Correr laranjas
 		for (int j = 0; j < blobs2; j++) {
+			//Correr background (segmetation mesa)
 			for (int i = 0; i < blobs; i++) {
 				if (
 					//Se o píxel do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida ou vice-versa
 					// (eixo do x)
-					(blob2[j].x >= blob[i].x && blob2[j].x <= (blob[i].x + blob[i].width) || blob[i].x >= blob2[j].x && blob[i].x <= (blob2[j].x + blob2[j].width))
-					&&
+					(blob2[j].x >= blob[i].x && blob2[j].x <= (blob[i].width + blob[i].x) || blob[i].x >= blob2[j].x && blob[i].x <= (blob2[j].width + blob2[j].x))
 
 					//Se o píxel do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida ou vice-versa
 					// (eixo do y)
-					(blob2[j].y >= blob[i].y && blob2[j].y <= (blob[i].y + blob[i].height) || blob[i].y >= blob2[j].y && blob[i].y <= (blob2[j].y + blob2[j].height))
+					&& (blob2[j].y >= blob[i].y && blob2[j].y <= (blob[i].height + blob[i].y) || blob[i].y >= blob2[j].y && blob[i].y <= (blob2[j].height + blob2[j].y))
 					
-					//Caso a diferença de área dos 2 blobs seja de 15% (valor obtido por testes)
+					//Caso a diferença de área dos 2 blobs seja de +15% ou -15% (valor obtido por testes)
 					&& (float)blob2[j].area / (float)blob[i].area >= 0.85 && (float)blob2[j].area / (float)blob[i].area <= 1.15
 
 					//Caso a imagem esteja dentro da frame
-					&& blob2[j].x > 1 && (blob2[j].x + blob2[j].width) < src->width-1 && 
-					blob2[j].y > 1 && (blob2[j].y + blob2[j].height) < src->height - 1 )
+					&& blob2[j].x > 1 && (blob2[j].x + blob2[j].width) < src->width-1 && blob2[j].y > 1 && (blob2[j].y + blob2[j].height) < src->height - 1 )
 				{
-					/*if (blobshist.size() == 0) {
-						blobshist.push_front(blob2[j]);
-						laranjas_counter++;
-					}
-
-					for (OVC obj : blobshist)
-					{
-						//if ((float)obj.area / (float)blob2[j].area < 0.955 ||
-						//(float)obj.area / (float)blob2[j].area > 1.035)
-						if(!(obj.xc > blob[i].xc - blob[i].x && obj.xc < blob[i].xc + blob[i].x &&
-							obj.yc > blob[i].yc - blob[i].y && obj.yc < blob[i].yc + blob[i].y))
-						{
-							blobshist.push_front(blob[i]);
-							laranjas_counter++;
-						}
-					}*/
-
-					//if ((blob[i].yc < (video.height / 3) + 2 && blob[i].yc > (video.height / 3) - 2)) laranjas_counter++;
-
-					//Incrementar numero de laranjas totais
+					//Incrementar número de laranjas totais
 					if (blob[i].yc >= ((video.height + 8) / 2) && blob[i].yc < ((video.height + 26) / 2)) laranjas_counter++;
 
 					//Desenho de área delimitadora e centro de gravidade
-					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(255, 50, 50, 0), 4, 4, 0);
-					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), blob[i].xc - blob[i].x, cv::Scalar(0, 255, 0, 0), 4, 2, 0);
+					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(0, 255, 0, 0), 5);
+					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), blob[i].xc - blob[i].x, cv::Scalar(0, 0, 255, 0), 0);
 
-					//Zona de texto informativos sobre as laranjas
-					str = std::string("Area:").append(std::to_string((float)blob[i].area * 55 / 280));
+					//Zona de texto informativo sobre as laranjas
+					str = std::string("Area:").append(std::to_string((int)blob[i].area * 55 / 280)).append(" mm");
 					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 60), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
-					str = std::string("Perimetro:").append(std::to_string((float)blob[i].perimeter * 55 / 280));
+					str = std::string("Perimetro:").append(std::to_string((int)blob[i].perimeter * 55 / 280)).append(" mm");
 					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 90), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 
 					if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 53 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 60) calibre = "13";
@@ -252,7 +241,21 @@ int main(void) {
 			}
 		}
 
-
+		str = std::string("RESOLUCAO: ").append(std::to_string(video.width)).append("x").append(std::to_string(video.height));
+		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
+		cv::putText(frame, str, cv::Point(20, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
+		str = std::string("TOTAL DE FRAMES: ").append(std::to_string(video.ntotalframes));
+		cv::putText(frame, str, cv::Point(20, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
+		cv::putText(frame, str, cv::Point(20, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
+		str = std::string("FRAME RATE: ").append(std::to_string(video.fps));
+		cv::putText(frame, str, cv::Point(20, 75), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
+		cv::putText(frame, str, cv::Point(20, 75), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
+		str = std::string("N. DA FRAME: ").append(std::to_string(video.nframe));
+		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0), 2);
+		cv::putText(frame, str, cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
+		str = std::string("Laranjas: ").append(std::to_string(laranjas_counter));
+		cv::putText(frame, str, cv::Point(20, 125), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0), 2);
+		cv::putText(frame, str, cv::Point(20, 125), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 125, 255, 0), 1);
 
 		/* Exibe a frame */
 		cv::imshow("VC - VIDEO", frame);
