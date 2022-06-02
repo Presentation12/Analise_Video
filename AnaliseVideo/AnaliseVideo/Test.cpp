@@ -188,8 +188,7 @@ int main(void) {
 		for (int j = 0; j < blobs2; j++) {
 			//Correr background (segmetation mesa)
 			for (int i = 0; i < blobs; i++) {
-				if (
-					//Se o píxel do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida ou vice-versa
+				if (//Se o píxel do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida ou vice-versa
 					// (eixo do x)
 					(blob2[j].x >= blob[i].x && blob2[j].x <= (blob[i].width + blob[i].x) || blob[i].x >= blob2[j].x && blob[i].x <= (blob2[j].width + blob2[j].x))
 
@@ -209,6 +208,12 @@ int main(void) {
 					//Desenho de área delimitadora e centro de gravidade
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(0, 255, 0, 0), 5);
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), blob[i].xc - blob[i].x, cv::Scalar(0, 0, 255, 0), 0);
+
+					cv::Rect rect(blob[i].xc - blob[i].width / 2, blob[i].yc - blob[i].height / 2, blob[i].width, blob[i].height);
+					cv::rectangle(frame, rect, cv::Scalar(255, 0, 0), 0);
+
+					//cv::Rect rect(blob[i].xc, blob[i].yc - blob[i].y, blob[i].width, blob[i].height);
+					//cv::rectangle(frame, rect, cv::Scalar(255, 0, 0), 0);
 
 					//Zona de texto informativo sobre as laranjas
 					str = std::string("Area:").append(std::to_string((int)blob[i].area * 55 / 280)).append(" mm");
