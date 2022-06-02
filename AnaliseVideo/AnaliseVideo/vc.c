@@ -1965,8 +1965,8 @@ int vc_gray_edge_prewitt(IVC* src, IVC* dst, float threshold)
 
 int vc_bgr_to_rgb(IVC* src, IVC* dst)
 {
-	unsigned char* data = (unsigned char*)src->data;
-	unsigned char* datadst = (unsigned char*)dst->data;
+	unsigned char* data = src->data;
+	unsigned char* datadst = dst->data;
 	int width = src->width;
 	int height = src->height;
 	int bytesperline = src->width * src->channels;

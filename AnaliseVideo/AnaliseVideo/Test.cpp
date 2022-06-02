@@ -193,6 +193,7 @@ int main(void) {
 		vc_binary_blob_info(hsv_blobed, blob, blobs);
 		vc_binary_blob_info(hsv_blobed2, blob2, blobs2);
 
+
 		memcpy(frame.data, src->data, video.width * video.height * 3);
 
 		//Parte de printagens em cada frame
