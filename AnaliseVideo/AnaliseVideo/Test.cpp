@@ -274,7 +274,7 @@ int main(void) {
 					classificacao = "Extra";
 
 					if (pontuacao == 1) classificacao = "I";
-					else if (pontuacao >= 3) classificacao = "II";
+					else if (pontuacao >= 5) classificacao = "II";
 					
 					if (classificacao == "II" && hasGreen == 0) classificacao = "III";
 
