@@ -42,48 +42,24 @@ IVC *vc_image_free(IVC *image);
 // FUN��ES: LEITURA E ESCRITA DE IMAGENS (PBM, PGM E PPM)
 IVC *vc_read_image(char *filename);
 int vc_write_image(char *filename, IVC *image);
-
-// Negativos
 int vc_gray_negative(IVC *srcdst);
 int vc_rgb_negative(IVC *srcdst);
-
-// Cores para Gray
 int vc_rgb_get_red_gray(IVC *srcdst);
 int vc_rgb_get_green_gray(IVC *srcdst);
 int vc_rgb_get_blue_gray(IVC *srcdst);
 int vc_rgb_to_gray(IVC *src, IVC *dst);
-
-// RGB para HSV
 int vc_rgb_to_hsv(IVC *src, IVC *dst);
-
-// Segmentaçao HSV
 int vc_hsv_segmentation(IVC *src, IVC *dst, int hmin, int hmax, int smin, int smax, int vmin, int vmax);
-
-// gray (1 canal) para RGB
 int vc_scale_gray_to_rgb(IVC *src, IVC *dst);
-
-// binarização, threshold
 int vc_gray_to_binary(IVC *src, IVC *dst, int threshold);
 int vc_gray_to_binary_global_mean(IVC *src, IVC *dst);
 int vc_gray_to_binary_midpoint_mean(IVC *src, IVC *dst, int kernel);
-
-// dilatação binária
 int vc_binary_dilate(IVC *src, IVC *dst, int kernel);
-
-// erosao binária
 int vc_binary_erode(IVC *src, IVC *dst, int kernel);
-
-// abertura e fecho binária
 int vc_binary_open(IVC *src, IVC *dst, int kernel);
 int vc_binary_close(IVC *src, IVC *dst, int kernel);
-
-// dilatação gray
 int vc_gray_erode(IVC *src, IVC *dst, int kernel);
-
-// erosão gray
 int vc_gray_dilate(IVC *src, IVC *dst, int kernel);
-
-// abertura e fecho gray
 int vc_gray_open(IVC *src, IVC *dst, int kernel);
 int vc_gray_close(IVC *src, IVC *dst, int kernel);
 
@@ -112,13 +88,12 @@ int vc_gray_histogram_show(IVC *src, IVC *dst);
 int equalize(unsigned char *datasrc, unsigned char *datadst, int bytesperline, int channels, int offset, int width, int height);
 int vc_gray_histogram_equalization(IVC *src, IVC *dst);
 int vc_rgb_histogram_equalization(IVC *src, IVC *dst);
-
-
-// Contornos
 int vc_gray_edge_prewitt(IVC* src, IVC* dst, float th);
 
 //FUNCOES NOVAS PARA TRABALHO
 int vc_bgr_to_rgb(IVC* src, IVC* dst);
+//Nao usada
 int vc_hsv_segmentation_fruta(IVC* src, IVC* dst, int hmin, int hmax, int smin, int smax, int vmin, int vmax);
+//Nao usada
 int vc_unite(IVC* src, IVC* dst, IVC* dstf);
 int vc_invert_binary(IVC* srcdst);
