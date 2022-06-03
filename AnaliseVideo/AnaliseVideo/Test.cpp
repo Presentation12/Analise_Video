@@ -15,10 +15,10 @@ extern "C" {
 	//printf("%d\n", video.nframe);
 
 	//Parte segmentacao da mesa e laranjas
-		//vc_hsv_segmentation(hsv, hsv_s, 15, 30, 40, 100, 0, 100);
-		//vc_hsv_segmentation_fruta(hsv, hsv_s2, 0, 12, 80, 100, 60, 100);
-		//vc_hsv_segmentation(hsv, hsv_s3, 15, 30, 50, 100, 25, 90);
-		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 110);
+		//vc_hsv_segmentation(hsv, hsv_s, 15, 30, 40, 80, 20, 100);
+		//vc_hsv_segmentation_fruta(hsv, hsv_s2, 0, 12, 70, 100, 55, 100);
+		//vc_hsv_segmentation(hsv, hsv_s3, 15, 30, 50, 95, 25, 90);
+		//vc_hsv_segmentation(hsv, hsv_s, 27, 45, 0, 90, 70, 90);
 
 		//vc_binary_open(hsv_s, bc, 5);
 		/*vc_binary_open(bc, bc_1, 5);
@@ -89,17 +89,22 @@ int main(void) {
 	int blobs2;
 	int pontuacao;
 	long int pos;
-	long int pos_inicial;
 	int valueMax;
 	int valueMin;
 	int saturationMax;
 	int saturationMin;
 	int diametroMax = 0;
 	int diametroMin = INT_MAX;
+	int calibreMax1 = 0;
+	int calibreMin1 = INT_MAX;
+	int calibreMax2 = 0;
+	int calibreMin2 = INT_MAX;
+	int calibreMax3 = 0;
+	int calibreMin3 = INT_MAX;
 	int hasGreen;
 	std::string calibre = "Invalido";
 	std::string classificacao = "Invalido";
-	std::string homogeneidade = "Invalido";
+	std::string homogeneidade = "Aprovado";
 
 	/* Leitura de v�deo de um ficheiro */
 	/* NOTA IMPORTANTE:
@@ -233,16 +238,19 @@ int main(void) {
 					saturationMin = 100;
 					hasGreen = 0;
 					
-					for (int h = blob[i].y; h < blob[i].y+blob[i].height; h++) {
-						for (int g = blob[i].x; g < blob[i].x+blob[i].width; g++) {
+					//Percorrer um blob pixel a pixel
+					for (int h = blob[i].y; h < blob[i].y + blob[i].height; h++) {
+						for (int g = blob[i].x; g < blob[i].x + blob[i].width; g++) {
 							pos = h * hsv->bytesperline + g * hsv->channels;
 							
 							//40, 50
 							//70, 85
 							//20, 30
-							if ((hsv->data[pos] >= 36 && hsv->data[pos] <= 65) && (hsv->data[pos + 1] >= 65 && hsv->data[pos + 1] <= 85) && (hsv->data[pos + 2] >= 20 && hsv->data[pos + 2] <= 40)
+							if ((hsv->data[pos] >= 36 && hsv->data[pos] <= 65) &&
+								(hsv->data[pos + 1] >= 65 && hsv->data[pos + 1] <= 85) &&
+								(hsv->data[pos + 2] >= 20 && hsv->data[pos + 2] <= 40)
 								&& hasGreen == 0) {
-								hasGreen == 1;
+								hasGreen = 1;
 							}
 
 							//3, 35
@@ -266,13 +274,13 @@ int main(void) {
 					classificacao = "Extra";
 
 					if (pontuacao == 1) classificacao = "I";
-					else if (pontuacao >= 2) classificacao = "II";
+					else if (pontuacao >= 3) classificacao = "II";
 					
 					if (classificacao == "II" && hasGreen == 0) classificacao = "III";
 
 					//Diferença entre diametros
-					if (blob[i].xc - blob[i].x > diametroMax) diametroMax = blob[i].xc - blob[i].x;
-					else if (blob[i].xc - blob[i].x < diametroMin) diametroMin = blob[i].xc - blob[i].x;
+					if ((blob[i].xc - blob[i].x) * 2 > diametroMax) diametroMax = (blob[i].xc - blob[i].x) * 2;
+					else if ((blob[i].xc - blob[i].x) * 2 < diametroMin) diametroMin = (blob[i].xc - blob[i].x) * 2;
 
 					//Desenho de área delimitadora e centro de gravidade
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(0, 255, 0, 0), 5);
@@ -306,10 +314,24 @@ int main(void) {
 					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 87 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 100) calibre = "1";
 					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 100) calibre = "0";
 
+					//Homogeneidade no calibre
+					if (calibre == "0" || calibre == "1" || calibre == "2") {
+						if ((float)(((blob[i].xc - blob[i].x) * 2 * 55) / 280) > calibreMax1) calibreMax1 = (int)(((blob[i].xc - blob[i].x) * 2 * 55) / 280);
+						else if ((float)(((blob[i].xc - blob[i].x) * 2 * 55) / 280) < calibreMin1) calibreMin1 = (int)(((blob[i].xc - blob[i].x) * 2 * 55) / 280);
+					}
+					else if (calibre == "3" || calibre == "4" || calibre == "5" || calibre == "6") {
+						if ((float)(((blob[i].xc - blob[i].x) * 2 * 55) / 280) > calibreMax2) calibreMax2 = (int)(((blob[i].xc - blob[i].x) * 2 * 55) / 280);
+						else if ((float)(((blob[i].xc - blob[i].x) * 2 * 55) / 280) < calibreMin2) calibreMin2 = (int)(((blob[i].xc - blob[i].x) * 2 * 55) / 280);
+					}
+					else if (calibre == "7" || calibre == "8" || calibre == "9" || calibre == "10" || calibre == "11" || calibre == "12" || calibre == "13") {
+						if ((float)(((blob[i].xc - blob[i].x) * 2 * 55) / 280) > calibreMax3) calibreMax3 = (int)(((blob[i].xc - blob[i].x) * 2 * 55) / 280);
+						else if ((float)(((blob[i].xc - blob[i].x) * 2 * 55) / 280) < calibreMin3) calibreMin3 = (int)(((blob[i].xc - blob[i].x) * 2 * 55) / 280);
+					}
+
 					if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 78) calibre.append(" - XXX");
 					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 67 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 78) calibre.append(" - XX");
 					else if ((float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 >= 63 && (float)((blob[i].xc - blob[i].x) * 2) * 55 / 280 < 74) calibre.append(" - X");
-					
+
 					str = std::string("Calibre: ").append(calibre);
 					cv::putText(frame, str, cv::Point(blob[i].xc - 150, blob[i].yc + 150), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0));
 				}
@@ -331,9 +353,29 @@ int main(void) {
 		str = std::string("Laranjas: ").append(std::to_string(laranjas_counter));
 		cv::putText(frame, str, cv::Point(20, 125), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0), 2);
 		cv::putText(frame, str, cv::Point(20, 125), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 125, 255, 0), 1);
-		str = std::string("Diferenca de Diametro: ").append(std::to_string(diametroMax - diametroMin >= 0 ? (((diametroMax - diametroMin) * 55) / 280) : 0));
+		str = std::string("Diferenca de Diametro: ").append(std::to_string(diametroMax - diametroMin >= 0 ? (float)(((diametroMax - diametroMin) * 55) / 280) : 0)).append(" mm");
 		cv::putText(frame, str, cv::Point(20, 150), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0), 2);
 		cv::putText(frame, str, cv::Point(20, 150), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255, 0), 1);
+
+		if (calibreMax1 - calibreMin1 > 0) {
+			if (calibreMax1 - calibreMin1 > 11) {
+				homogeneidade = "Reprovado (Ultimo Visto: Calibres 0 - 2)";
+			}
+		}
+		if (calibreMax2 - calibreMin2 > 0) {
+			if (calibreMax2 - calibreMin2 > 9) {
+				homogeneidade = "Reprovado (Ultimo Visto: Calibres 3 - 6)";
+			}
+		}
+		if (calibreMax3- calibreMin3 > 0) {
+			if (calibreMax3 - calibreMin3 > 7) {
+				homogeneidade = "Reprovado (Ultimo Visto: Calibres 7 - 13)";
+			}
+		}
+
+		str = std::string("Homogeneidade de calibre: ").append(homogeneidade);
+		cv::putText(frame, str, cv::Point(20, 175), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0), 2);
+		cv::putText(frame, str, cv::Point(20, 175), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255, 0), 1);
 
 		/* Exibe a frame */
 		cv::imshow("VC - VIDEO", frame);
