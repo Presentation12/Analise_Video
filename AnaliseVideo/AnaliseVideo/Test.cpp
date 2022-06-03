@@ -94,9 +94,8 @@ int main(void) {
 	int valueMin;
 	int saturationMax;
 	int saturationMin;
-	int saturationMin;
-	int diametroMax;
-	int diametroMin;
+	int diametroMax = 0;
+	int diametroMin = INT_MAX;
 	int hasGreen;
 	std::string calibre = "Invalido";
 	std::string classificacao = "Invalido";
@@ -232,8 +231,6 @@ int main(void) {
 					valueMin = 100;
 					saturationMax = 0;
 					saturationMin = 100;
-					diametroMax = 0;
-					diametroMin = 100;
 					hasGreen = 0;
 					
 					for (int h = blob[i].y; h < blob[i].y+blob[i].height; h++) {
@@ -272,6 +269,10 @@ int main(void) {
 					else if (pontuacao >= 2) classificacao = "II";
 					
 					if (classificacao == "II" && hasGreen == 0) classificacao = "III";
+
+					//Diferença entre diametros
+					if (blob[i].xc - blob[i].x > diametroMax) diametroMax = blob[i].xc - blob[i].x;
+					else if (blob[i].xc - blob[i].x < diametroMin) diametroMin = blob[i].xc - blob[i].x;
 
 					//Desenho de área delimitadora e centro de gravidade
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), 1, cv::Scalar(0, 255, 0, 0), 5);
@@ -330,6 +331,9 @@ int main(void) {
 		str = std::string("Laranjas: ").append(std::to_string(laranjas_counter));
 		cv::putText(frame, str, cv::Point(20, 125), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0), 2);
 		cv::putText(frame, str, cv::Point(20, 125), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 125, 255, 0), 1);
+		str = std::string("Diferenca de Diametro: ").append(std::to_string(diametroMax - diametroMin >= 0 ? (((diametroMax - diametroMin) * 55) / 280) : 0));
+		cv::putText(frame, str, cv::Point(20, 150), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 0, 0), 2);
+		cv::putText(frame, str, cv::Point(20, 150), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255, 0), 1);
 
 		/* Exibe a frame */
 		cv::imshow("VC - VIDEO", frame);
