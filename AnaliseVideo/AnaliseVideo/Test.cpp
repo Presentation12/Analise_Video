@@ -73,7 +73,6 @@ int main(void) {
 	IVC* hsv = NULL;
 	IVC* hsv_s = NULL;
 	IVC* hsv_s2 = NULL;
-	IVC* hsv_s3 = NULL;
 	IVC* bc = NULL;
 	IVC* bc_1 = NULL;
 	IVC* bc2 = NULL;
@@ -84,6 +83,8 @@ int main(void) {
 	IVC* bc2_5 = NULL;
 	IVC* hsv_blobed = NULL;
 	IVC* hsv_blobed2 = NULL;
+	OVC* blob = NULL;
+	OVC* blob2 = NULL;
 	int laranjas_counter = 0;
 	int blobs;
 	int blobs2;
@@ -151,7 +152,6 @@ int main(void) {
 		hsv = vc_image_new(video.width, video.height, 3, 255);
 		hsv_s = vc_image_new(video.width, video.height, 1, 255);
 		hsv_s2 = vc_image_new(video.width, video.height, 1, 255);
-		hsv_s3 = vc_image_new(video.width, video.height, 1, 255);
 		bc = vc_image_new(video.width, video.height, 1, 255);
 		bc_1 = vc_image_new(video.width, video.height, 1, 255);
 		bc2 = vc_image_new(video.width, video.height, 1, 255);
@@ -196,8 +196,8 @@ int main(void) {
 		vc_binary_open(bc2_3, bc2_4, 7);
 
 		//Fazer etiquetagem e guardar informações dos blobs detetados em cada segmentação
-		OVC* blob = vc_binary_blob_labelling(bc_1, hsv_blobed, &blobs);
-		OVC* blob2 = vc_binary_blob_labelling(bc2_1, hsv_blobed2, &blobs2);
+		blob = vc_binary_blob_labelling(bc_1, hsv_blobed, &blobs);
+		blob2 = vc_binary_blob_labelling(bc2_1, hsv_blobed2, &blobs2);
 		vc_binary_blob_info(hsv_blobed, blob, blobs);
 		vc_binary_blob_info(hsv_blobed2, blob2, blobs2);
 
@@ -398,7 +398,6 @@ int main(void) {
 	vc_image_free(bc2_5);
 	vc_image_free(hsv_s);
 	vc_image_free(hsv_s2);
-	vc_image_free(hsv_s3);
 	vc_image_free(hsv_blobed);
 	vc_image_free(hsv_blobed2);
 	// +++++++++++++++++++++++++
