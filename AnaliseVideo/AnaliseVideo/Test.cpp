@@ -77,10 +77,6 @@ int main(void) {
 	IVC* bc_1 = NULL;
 	IVC* bc2 = NULL;
 	IVC* bc2_1 = NULL;
-	IVC* bc2_2 = NULL;
-	IVC* bc2_3 = NULL;
-	IVC* bc2_4 = NULL;
-	IVC* bc2_5 = NULL;
 	IVC* hsv_blobed = NULL;
 	IVC* hsv_blobed2 = NULL;
 	OVC* blob = NULL;
@@ -156,10 +152,6 @@ int main(void) {
 		bc_1 = vc_image_new(video.width, video.height, 1, 255);
 		bc2 = vc_image_new(video.width, video.height, 1, 255);
 		bc2_1 = vc_image_new(video.width, video.height, 1, 255);
-		bc2_2 = vc_image_new(video.width, video.height, 1, 255);
-		bc2_3 = vc_image_new(video.width, video.height, 1, 255);
-		bc2_4 = vc_image_new(video.width, video.height, 1, 255);
-		bc2_5 = vc_image_new(video.width, video.height, 1, 255);
 		hsv_blobed = vc_image_new(video.width, video.height, 1, 255);
 		hsv_blobed2 = vc_image_new(video.width, video.height, 1, 255);
 		blobs = 0;
@@ -191,9 +183,9 @@ int main(void) {
 
 		vc_binary_close(hsv_s2, bc2, 7);
 		vc_binary_close(bc2, bc2_1, 7);
-		vc_binary_open(bc2_1, bc2_2, 7);
-		vc_binary_open(bc2_2, bc2_3, 7);
-		vc_binary_open(bc2_3, bc2_4, 7);
+		//vc_binary_open(bc2_1, bc2_2, 7);
+		//vc_binary_open(bc2_2, bc2_3, 7);
+		//vc_binary_open(bc2_3, bc2_4, 7);
 
 		//Fazer etiquetagem e guardar informações dos blobs detetados em cada segmentação
 		blob = vc_binary_blob_labelling(bc_1, hsv_blobed, &blobs);
@@ -212,17 +204,20 @@ int main(void) {
 			for (int i = 0; i < blobs; i++) {
 				if (//Se o píxel do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida ou vice-versa
 					// (eixo do x)
-					(blob2[j].x >= blob[i].x && blob2[j].x <= (blob[i].width + blob[i].x) || blob[i].x >= blob2[j].x && blob[i].x <= (blob2[j].width + blob2[j].x))
+					(blob2[j].x >= blob[i].x && blob2[j].x <= (blob[i].width + blob[i].x) ||
+						blob[i].x >= blob2[j].x && blob[i].x <= (blob2[j].width + blob2[j].x))
 
 					//Se o píxel do blob da segmentação da fruta esteja dentro do blob da segmentação da mesa invertida ou vice-versa
 					// (eixo do y)
-					&& (blob2[j].y >= blob[i].y && blob2[j].y <= (blob[i].height + blob[i].y) || blob[i].y >= blob2[j].y && blob[i].y <= (blob2[j].height + blob2[j].y))
+					&& (blob2[j].y >= blob[i].y && blob2[j].y <= (blob[i].height + blob[i].y) ||
+						blob[i].y >= blob2[j].y && blob[i].y <= (blob2[j].height + blob2[j].y))
 					
 					//Caso a diferença de área dos 2 blobs seja de +15% ou -15% (valor obtido por testes)
 					&& (float)blob2[j].area / (float)blob[i].area >= 0.85 && (float)blob2[j].area / (float)blob[i].area <= 1.15
 
 					//Caso a imagem esteja dentro da frame
-					&& blob2[j].x > 1 && (blob2[j].x + blob2[j].width) < src->width-1 && blob2[j].y > 1 && (blob2[j].y + blob2[j].height) < src->height - 1 )
+					&& blob2[j].x > 1 && (blob2[j].x + blob2[j].width) < src->width-1 && blob2[j].y > 1 &&
+					(blob2[j].y + blob2[j].height) < src->height - 1 )
 				{
 					//Incrementar número de laranjas totais
 					if (blob[i].yc >= ((video.height + 8) / 2) && blob[i].yc < ((video.height + 26) / 2)) laranjas_counter++;
@@ -245,7 +240,7 @@ int main(void) {
 							
 							//40, 50
 							//70, 85
-							//20, 30
+							//20, 40
 							if ((hsv->data[pos] >= 36 && hsv->data[pos] <= 65) &&
 								(hsv->data[pos + 1] >= 65 && hsv->data[pos + 1] <= 85) &&
 								(hsv->data[pos + 2] >= 20 && hsv->data[pos + 2] <= 40)
@@ -256,7 +251,9 @@ int main(void) {
 							//3, 35
 							//40, 100
 							//0, 95
-							if ((hsv->data[pos] >= 3 && hsv->data[pos] <= 35) && (hsv->data[pos + 1] >= 40 && hsv->data[pos + 1] <= 100) && (hsv->data[pos + 2] >= 0 && hsv->data[pos + 2] <= 95)) {
+							if ((hsv->data[pos] >= 3 && hsv->data[pos] <= 35) && (hsv->data[pos + 1] >= 40 &&
+								hsv->data[pos + 1] <= 100) && (hsv->data[pos + 2] >= 0 && hsv->data[pos + 2] <= 95)) {
+
 								if (hsv->data[pos + 1] < saturationMin) saturationMin = hsv->data[pos + 1];
 								else if (hsv->data[pos + 1] > saturationMax) saturationMax = hsv->data[pos + 1];
 
@@ -267,8 +264,11 @@ int main(void) {
 					}
 
 					if(saturationMax > 55 || valueMax > 55) pontuacao += 3;
-					else if ((float)saturationMin / saturationMax >= 0.95 && (float)saturationMin / saturationMax <= 1.05) pontuacao++;
-					else if ((float)saturationMin / saturationMax >= 0.90 && (float)saturationMin / saturationMax <= 1.10) pontuacao+=2;
+					else if (((float)saturationMin / saturationMax >= 0.95 && (float)saturationMin / saturationMax <= 1.05) 
+						|| ((float)valueMin / valueMax >= 0.95 && (float)saturationMin / saturationMax <= 1.05)) pontuacao++;
+
+					else if (((float)saturationMin / saturationMax >= 0.90 && (float)saturationMin / saturationMax <= 1.10)
+						||((float)valueMin / valueMax >= 0.90 && (float)valueMin / valueMax <= 1.10)) pontuacao+=2;
 
 					//Atribuição de classificação
 					classificacao = "Extra";
@@ -288,7 +288,7 @@ int main(void) {
 					cv::circle(frame, cv::Point(blob[i].x + blob[i].width,blob[i].y + blob[i].height), 1, cv::Scalar(0, 255, 0, 0), 5);
 					cv::circle(frame, cv::Point(blob[i].xc, blob[i].yc), blob[i].xc - blob[i].x, cv::Scalar(0, 0, 255, 0), 0);
 
-					cv::Rect rect(blob[i].xc - blob[i].width / 2, blob[i].yc - blob[i].height / 2, blob[i].width, blob[i].height);
+					cv::Rect rect(blob[i].x, blob[i].y, blob[i].width, blob[i].height);
 					cv::rectangle(frame, rect, cv::Scalar(255, 0, 0), 0);
 
 					//Zona de texto informativo sobre as laranjas
@@ -392,10 +392,6 @@ int main(void) {
 	vc_image_free(bc_1);
 	vc_image_free(bc2);
 	vc_image_free(bc2_1);
-	vc_image_free(bc2_2);
-	vc_image_free(bc2_3);
-	vc_image_free(bc2_4);
-	vc_image_free(bc2_5);
 	vc_image_free(hsv_s);
 	vc_image_free(hsv_s2);
 	vc_image_free(hsv_blobed);
