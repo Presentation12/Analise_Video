@@ -265,7 +265,7 @@ int main(void) {
 
 					if(saturationMax > 55 || valueMax > 55) pontuacao += 3;
 					else if (((float)saturationMin / saturationMax >= 0.95 && (float)saturationMin / saturationMax <= 1.05) 
-						|| ((float)valueMin / valueMax >= 0.95 && (float)saturationMin / saturationMax <= 1.05)) pontuacao++;
+						|| ((float)valueMin / valueMax >= 0.95 && (float)valueMin / valueMax <= 1.05)) pontuacao++;
 
 					else if (((float)saturationMin / saturationMax >= 0.90 && (float)saturationMin / saturationMax <= 1.10)
 						||((float)valueMin / valueMax >= 0.90 && (float)valueMin / valueMax <= 1.10)) pontuacao+=2;
