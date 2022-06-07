@@ -3,9 +3,9 @@ C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.h(12,1): warn
 C:\opencv\build\include\opencv2\core\cvdef.h(493): message : see previous definition of 'MAX'
 C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\vc.h(13,1): warning C4005: 'MIN': macro redefinition
 C:\opencv\build\include\opencv2\core\cvdef.h(489): message : see previous definition of 'MIN'
-C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\Test.cpp(50,16): warning C4566: character represented by universal-character-name '\uFFFD' cannot be represented in the current code page (1252)
+C:\TrabalhosPraticos\VC\Analise_Video\AnaliseVideo\AnaliseVideo\Test.cpp(118,16): warning C4566: character represented by universal-character-name '\uFFFD' cannot be represented in the current code page (1252)
   Generating code
-  1 of 125 functions ( 0.8%) were compiled, the rest were copied from previous compilation.
+  1 of 155 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
